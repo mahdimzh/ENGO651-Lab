@@ -1,3 +1,4 @@
 # Project 1
 
-ENGO 551
+
+"" python manage.py createsuperuser

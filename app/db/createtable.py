@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import text
 
-os.environ["DATABASE_URL"] = "postgres://postgres:postgres@localhost:5432/library"
+os.environ["DATABASE_URL"] = "postgres://postgres:postgres@db:5432/library"
 
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")

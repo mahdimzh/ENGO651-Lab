@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import text
 
-os.environ["DATABASE_URL"] = "postgres://postgres:postgres@localhost:5432/library"
+os.environ["DATABASE_URL"] = "postgres://postgres:postgres@db:5432/library"
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -22,21 +22,21 @@ db = scoped_session(sessionmaker(bind=engine))
 
 def main():
     file_dir = os.path.dirname(os.path.realpath('__file__'))
-    file_name = os.path.join(file_dir, 'db/books.csv')
+    file_name = os.path.join(file_dir, './books.csv')
 
     f = open(file_name)
     rows = csv.reader(f)
-    db.execute(text("TRUNCATE books CASCADE"))
+    db.execute(text("TRUNCATE books_book CASCADE"))
     index = 0
     for isbn, title, author, year in rows:
         # don't add the header row
         if index > 0:
             try:
-                db.execute(text("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)"),
-                    {"isbn": isbn, "title": title, "author": author, "year": year})
+                db.execute(text("INSERT INTO books_book (id, title, author, year) VALUES (:isbn, :title, :author, :year)"),
+                    {"isbn": index, "title": title, "author": author, "year": year})
                 index += 1
             except Exception as e:
-                pass
+                print(e)
         else :
             index += 1
     db.commit()
