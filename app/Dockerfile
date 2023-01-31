@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip install -r requirements.txt --no-cache-dir
 
-ENV DATABASE_URL=postgres://postgres:postgres@postgres_container:5432/library
+# ENV DATABASE_URL=postgres://postgres:postgres@postgres_container:5432/library
 
 ENTRYPOINT ["python"] 
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -54,6 +55,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MIDDLEWARE_CLASSES = [
+
+]
+
 ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
@@ -86,18 +91,12 @@ DATABASES = {
 
     'default': {
 
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'library',
-
-        'USER': 'postgres',
-
-        'PASSWORD': 'postgres',
-
-        'HOST': 'db',
-
-        'PORT': '5432',
-
+        'USER': 'library',
+        'PASSWORD': 'library@passowrd',
+        'HOST':'localhost',
+        'PORT':'6033',
     }
 }
 
@@ -139,6 +138,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "staticfiles"), 
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

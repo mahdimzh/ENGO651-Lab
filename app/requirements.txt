@@ -3,3 +3,4 @@ SQLAlchemy
 sqlalchemy
 flask_sqlalchemy
 django
+pymysql

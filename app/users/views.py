@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 def home(request):
-    return render(request, 'users/home.html')
+    if request.user.is_authenticated:
+        return render(request, 'users/home.html')
+    return HttpResponseRedirect(reverse('login')) # or http response
 
 def register(request):
     if request.method == 'POST':

@@ -3,24 +3,31 @@ version: '3.8'
 services:
   db:
     container_name: db
-    image: postgres
+    image: mysql:5.7
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: library
+      MYSQL_ROOT_PASSWORD: root@passowrd
+      MYSQL_DATABASE: library
+      MYSQL_USER: library
+      MYSQL_PASSWORD: library@passowrd
+      MYSQL_ROOT_HOST: '%'
     ports:
-      - "5432:5432"
+      - "6033:3306"
+    # volumes:
+    #   - dbdata:/var/lib/mysql
 
-  db_visualizer:
-    container_name: db_visualizer
-    image: dpage/pgadmin4
-    restart: always
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - db
     environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@admin.com
-      PGADMIN_DEFAULT_PASSWORD: p@ssw0rd
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
     ports:
-      - "5050:80"
+      - 5050:80
     depends_on:
       - db
 
