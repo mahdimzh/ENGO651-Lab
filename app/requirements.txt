@@ -4,3 +4,6 @@ sqlalchemy
 flask_sqlalchemy
 django
 pymysql
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
