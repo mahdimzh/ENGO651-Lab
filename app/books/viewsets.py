@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.db import connection
 from django.http import JsonResponse
+import json
 
 class ExamplePagination(PageNumberPagination):
     page_size = 10
@@ -30,22 +31,29 @@ class BookViewSet(viewsets.ModelViewSet):
     def list(self, request):
         # queryset = self.get_queryset()
         # page = self.paginate_queryset(self.queryset)
-        title_term = self.request.query_params.get('title', '')
-        isbn_term = self.request.query_params.get('isbn', '')
-        author_term = self.request.query_params.get('author', '')
-        
-        # queryset = self.get_queryset().filter(title__contains=search_term).filter(isbn__contains=isbn_term).filter(author__contains=author_term)
-        # serializer = self.serializer_class(queryset, many=True)
+        filters = self.request.query_params.get('filter', '')
+        filters = json.loads(filters)
 
+        title_term = filters['title']
+        isbn_term = filters['isbn']
+        author_term = filters['author']
+        
+        # queryset = self.get_queryset().filter(title__contains=title_term).filter(isbn__contains=isbn_term).filter(author__contains=author_term)
+        # serializer = self.serializer_class(queryset, many=True)
+        # return Response(serializer.data)
+
+        res = []
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM books_book WHERE title LIKE %s AND isbn LIKE %s AND author LIKE %s",
                        ['%' + title_term + '%', '%' + isbn_term + '%', '%' + author_term + '%'])
 
             rows = cursor.fetchall()
+            for row in rows:
+                res.append({'id': row[0], 'isbn': row[1], 'name': row[2], 'author': row[3], 'year': row[4]})
+
+        return JsonResponse({'data': res})
 
 
-        # return Response(serializer.data)
-        return JsonResponse({'data': rows})
 
 
     def get_object(self):

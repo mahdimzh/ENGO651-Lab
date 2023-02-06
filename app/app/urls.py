@@ -23,7 +23,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('books/', include('books.urls', namespace='books')), 
+    # path('books/', include('books.urls', namespace='books')), 
     # path('books/', BookListCreateAPIView.as_view(), name='book-list-create'),
 
     # path('', user_views.home, name='home'),

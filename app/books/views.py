@@ -6,9 +6,9 @@ from .serializers import BookSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # @login_required
-class BookList(LoginRequiredMixin, generics.ListAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
+# class BookList(LoginRequiredMixin, generics.ListAPIView):
+#     queryset = Book.objects.all()
+#     serializer_class = BookSerializer
 
 
 
