@@ -1,4 +1,4 @@
-# Project 1
+# ENGO551 - Lab 1 Assignment
 ## Mahdi Mohammadizadeh (30175778)
 ## Hadi Aghazadeh (30181045)
 
