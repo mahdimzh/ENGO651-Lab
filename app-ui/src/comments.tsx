@@ -11,6 +11,23 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+import Grid from '@mui/material/Grid';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import { dataProvider } from './dataProvider'
+import { useNotify } from 'react-admin';
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -22,6 +39,61 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function Comments(props: any) {
+  const notify = useNotify();
+  
+  // const [filters, setFilters] = React.useState({
+  //   book_id: 0,
+  // });
+
+  const [comments, setComments] = React.useState([]);
+
+  const [comment, setComment] = React.useState('')
+
+  const submitComment = () => {
+    return dataProvider.create('comments/', {
+      data: { book: props.bookId, user: localStorage.getItem("user_id"), comment: comment }
+    })
+      .then(
+        (data) => {
+          notify('Submited Successfully')
+          setComment('')
+          reload()
+
+        },
+        (error: any) => {
+          notify('An Error Happen')
+
+        }
+      )
+      .catch((error: any) => {
+        notify('An Error Happen')
+      })
+
+  }
+
+  const reload = () => {
+    dataProvider.getList('comments', {
+      pagination: { page: 0, perPage: 0 },
+      sort: { field: '', order: '' },
+      filter: {book_id: props.bookId},
+    }).then(res => setComments(res.data as []))
+  }
+
+  React.useEffect(() => {
+    // reload()
+
+    return () => {
+      setComments([])
+    };
+  }, []);
+
+  React.useEffect(() => {
+    console.log(props)
+    if(props.open === true && props.bookId !== 0) {
+      reload()
+    }
+  }, [props]);
+
   return (
     <div>
       <Dialog
@@ -50,18 +122,60 @@ export default function Comments(props: any) {
             */}
           </Toolbar>
         </AppBar>
-        <List>
-          <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
-          <Divider />
-          <ListItem button>
-            <ListItemText
-              primary="Default notification ringtone"
-              secondary="Tethys"
-            />
-          </ListItem>
-        </List>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Item>
+              <TextField
+                id="filled-multiline-static"
+                label="Add your comment"
+                multiline
+                value={comment}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setComment(event.target.value)}
+                rows={4}
+                style={{ width: '100%' }}
+                // defaultValue=""
+                variant="filled"
+              />
+
+              <Button variant="contained" onClick={() => submitComment()}>Submit</Button>
+
+            </Item>
+          </Grid>
+          <Grid item xs={12}>
+            <Item>
+              <div style={{ textAlign: 'left', fontWeight: 'bold' }}>
+                Other Comments...
+              </div>
+              {comments.map((comment: any, i: number) => (
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar alt={comment.username} src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={comment.username}
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {comment.comment}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                </List>
+              ))}
+            </Item>
+          </Grid>
+        </Grid>
+
       </Dialog>
     </div>
   );

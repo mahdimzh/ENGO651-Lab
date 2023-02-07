@@ -33,12 +33,14 @@ const theme = createTheme();
 export default function Register() {
   const notify = useNotify();
 
-  const [form, setForm] = React.useState({
+  const initialForm = {
     username: '',
     password: '',
     password2: '',
     email: '',
-  });
+  }
+
+  const [form, setForm] = React.useState(initialForm);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,7 +50,8 @@ export default function Register() {
     })
       .then(
         (data) => {
-          notify('Created Successfully')
+          setForm(initialForm)
+          notify('Created Successfully, Now you can login')
         },
         (error: any) => {
           notify('An Error Happen')

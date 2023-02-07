@@ -13,6 +13,7 @@ export const authProvider = {
             localStorage.setItem('refresh', data.refresh);
             localStorage.setItem('email', data.email);
             localStorage.setItem('username', data.username);
+            localStorage.setItem('user_id', data.user.id);
             return Promise.resolve()
         },
         (error: any) => {

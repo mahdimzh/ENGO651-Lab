@@ -26,6 +26,8 @@ export default function Books() {
   const dataProvider = useDataProvider();
   const [openComments, setOpenComments] = React.useState(false);
   const [openFilters, setOpenFilters] = React.useState(false);
+  const [bookId, setBookId] = React.useState(0);
+  
   const [filters, setFilters] = React.useState({
     isbn: '',
     title: '',
@@ -34,11 +36,13 @@ export default function Books() {
   const [books, setBooks] = React.useState([]);
 
 
-  const handleClickOpenComments = () => {
+  const handleClickOpenComments = (book_id) => {
+    setBookId(book_id)
     setOpenComments(true);
   };
 
   const handleCloseComments = () => {
+    setBookId(0)
     setOpenComments(false);
   };
 
@@ -67,6 +71,7 @@ export default function Books() {
   return (
     <React.Fragment>
       <Comments
+        bookId={bookId}
         open={openComments}
         handleClose={() => handleCloseComments()}
       />
@@ -119,7 +124,7 @@ export default function Books() {
         <IconButton color="primary" aria-label="filter" component="label" onClick={() => setOpenFilters(true)}>
           <FilterListIcon />
         </IconButton>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} style={{padding: 5}}>
           {
             filters.isbn &&
             <Chip label={`Isbn: ${filters.isbn}`} onDelete={() => handleDeleteFilter('isbn')} />
@@ -159,8 +164,8 @@ export default function Books() {
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.author}</TableCell>
                 <TableCell>{row.year}</TableCell>
-                <TableCell align="right">
-                  <IconButton color="primary" component="label" onClick={() => handleClickOpenComments()}>
+                <TableCell >
+                  <IconButton color="primary" component="label" onClick={() => handleClickOpenComments(row.id)}>
                     <InfoIcon />
                   </IconButton>
                 </TableCell>
