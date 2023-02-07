@@ -15,13 +15,14 @@ class ExamplePagination(PageNumberPagination):
     max_page_size = 100
 
 class BookViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get']
+    # http_method_names = ['get']
     serializer_class = BookSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['updated']
     ordering = ['-updated']
     queryset = Book.objects.all()
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
     pagination_class = ExamplePagination
 
@@ -53,9 +54,6 @@ class BookViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({'data': res})
 
-
-
-
     def get_object(self):
         lookup_field_value = self.kwargs[self.lookup_field]
 
@@ -63,3 +61,28 @@ class BookViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+
+    # def perform_create(self, serializer): 
+    #     author_id = self.request.data.get('author') 
+    #     # author = Author.objects.get(id=author_id) 
+    #     # serializer.save(author=author)
+
+
+
+    # def get_object(self):
+    #     lookup_field_value = self.kwargs[self.lookup_field]
+    #     # obj = Book.objects.get(id=lookup_field_value)
+    #     # self.check_object_permissions(self.request, obj)
+
+    #     res = []
+    #     with connection.cursor() as cursor:
+    #         cursor.execute("SELECT * FROM book_reviews_review WHERE book_id=%s",
+    #                    [lookup_field_value])
+
+    #         rows = cursor.fetchall()
+    #         for row in rows:
+    #             res.append({'id': row[0], 'comment': row[1], 'book_id': row[2], 'user_id': row[3]})
+
+
+    #     return JsonResponse({'data': res})

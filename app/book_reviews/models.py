@@ -10,4 +10,4 @@ class Review(models.Model):
     # rating = models.PositiveSmallIntegerField()
 
     def __str__(self):
-        return self.comment
+        return self.book
