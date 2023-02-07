@@ -130,7 +130,7 @@ export default function Register() {
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, password2: event.target.value })}
                   name="password2"
                   label="Password Repeat"
-                  type="password2"
+                  type="password"
                   id="password2"
                   autoComplete="Password Repeat"
                 />
