@@ -65,7 +65,7 @@ The project has been dockerized for easy deployment. To run the project, you nee
 Clone the repository: 
 
 
-`git clone https://github.com/<username>/<repo-name>.git `
+`git clone git@github.com:mahdimzh/ENGO651-Lab1.git `
 
 
 Navigate to the project directory: 
@@ -82,8 +82,25 @@ For the first time, we must create database.
 
 
 Build the Docker image: 
+At the moment the app and app-ui can not be start using docker. We use docker only for MySQL and PhpMyAdmin: 
+
+To start DB:
 
 `docker compose up -d`
+
+To start the app:
+
+`cd app`
+
+`python manage.py runserver`
+
+To start the app-ui:
+
+`cd app-ui`
+
+`npm install`
+
+`yarn dev`
 
 
 # To access the application:
