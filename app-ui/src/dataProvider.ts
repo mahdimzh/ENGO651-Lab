@@ -1,7 +1,6 @@
 import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
 // import axios from 'axios';
-
 const { API_URL } = (window as any).config;
 
 const apiUrl = API_URL || 'http://localhost:8000/api';
