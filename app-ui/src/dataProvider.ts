@@ -2,7 +2,9 @@ import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
 // import axios from 'axios';
 
-const apiUrl = 'http://localhost:8000/api';
+const { API_URL } = (window as any).config;
+
+const apiUrl = API_URL || 'http://localhost:8000/api';
 // const httpClient = fetchUtils.fetchJson;
 
 const not_protected_routes = [
