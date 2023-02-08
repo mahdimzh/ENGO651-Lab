@@ -5,12 +5,17 @@ import { stringify } from "query-string";
 const apiUrl = 'http://localhost:8000/api';
 // const httpClient = fetchUtils.fetchJson;
 
+const not_protected_routes = [
+    'login',
+    'register'
+]
+
 const httpClient = (url, options = {}) => {
     if (!options.headers) {
         options.headers = new Headers({ Accept: 'application/json' });
     }
 
-    if(localStorage.getItem('access')) {
+    if(localStorage.getItem('access') && not_protected_routes.find((r) => url.includes(r)) === undefined) {
         options.headers.set('Authorization', `Bearer ${localStorage.getItem('access')}`)
     }
 
