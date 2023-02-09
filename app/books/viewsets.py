@@ -8,6 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 from django.db import connection
 from django.http import JsonResponse
 import json
+from django.http import HttpResponseNotFound
+from django.http import Http404
 
 class ExamplePagination(PageNumberPagination):
     page_size = 10
@@ -50,17 +52,25 @@ class BookViewSet(viewsets.ModelViewSet):
 
             rows = cursor.fetchall()
             for row in rows:
-                res.append({'id': row[0], 'isbn': row[1], 'name': row[2], 'author': row[3], 'year': row[4]})
+                res.append({'id': row[0], 'isbn': row[1], 'title': row[2], 'author': row[3], 'year': row[4]})
 
         return JsonResponse({'data': res})
 
     def get_object(self):
         lookup_field_value = self.kwargs[self.lookup_field]
 
-        obj = Book.objects.get(id=lookup_field_value)
-        self.check_object_permissions(self.request, obj)
+        with connection.cursor() as cursor: 
+            cursor.execute("SELECT * FROM books_book WHERE isbn=%s limit 1",
+                       [lookup_field_value])
 
-        return obj
+            obj = cursor.fetchone()
+            if obj is None:
+                raise Http404("isbn {} not found", lookup_field_value)         
+            obj = {'id': obj[0], 'isbn': obj[1], 'title': obj[2], 'author': obj[3], 'year': obj[4]}
+
+        # obj = Book.objects.get(id=lookup_field_value)
+        serializer = self.get_serializer(obj)
+        return serializer.data
 
 
     # def perform_create(self, serializer): 

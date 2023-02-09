@@ -58,7 +58,12 @@ class BookReviewViewSet(viewsets.ModelViewSet):
         # serializer.is_valid(raise_exception=True)
         # serializer.save(data=self.request.data)
         # headers = self.get_success_headers(serializer.data)
-        serializer.save()
+        sql = "INSERT INTO book_reviews_review (comment, book_id, user_id, rating) VALUES (%s, %s, %s, %s)"
+        val = (self.request.data['comment'], self.request.data['book'], self.request.data['user'], self.request.data['rating'])
+        with connection.cursor() as cursor: 
+            cursor.execute(sql, val)
+
+        # serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

@@ -26,7 +26,7 @@ export default function Books() {
   const dataProvider = useDataProvider();
   const [openComments, setOpenComments] = React.useState(false);
   const [openFilters, setOpenFilters] = React.useState(false);
-  const [bookId, setBookId] = React.useState(0);
+  const [book, setBook] = React.useState(null);
   
   const [filters, setFilters] = React.useState({
     isbn: '',
@@ -36,13 +36,13 @@ export default function Books() {
   const [books, setBooks] = React.useState([]);
 
 
-  const handleClickOpenComments = (book_id) => {
-    setBookId(book_id)
+  const handleClickOpenComments = (book: React.SetStateAction<null>) => {
+    setBook(book)
     setOpenComments(true);
   };
 
   const handleCloseComments = () => {
-    setBookId(0)
+    setBook(null)
     setOpenComments(false);
   };
 
@@ -71,7 +71,7 @@ export default function Books() {
   return (
     <React.Fragment>
       <Comments
-        bookId={bookId}
+        book={book}
         open={openComments}
         handleClose={() => handleCloseComments()}
       />
@@ -147,7 +147,7 @@ export default function Books() {
             <TableRow>
               <TableCell>#</TableCell>
               <TableCell >Isbn</TableCell>
-              <TableCell >Name</TableCell>
+              <TableCell >Title</TableCell>
               <TableCell >Author</TableCell>
               <TableCell >Year</TableCell>
               <TableCell >Action</TableCell>
@@ -161,11 +161,11 @@ export default function Books() {
               >
                 <TableCell >{i + 1}</TableCell>
                 <TableCell>{row.isbn}</TableCell>
-                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.title}</TableCell>
                 <TableCell>{row.author}</TableCell>
                 <TableCell>{row.year}</TableCell>
                 <TableCell >
-                  <IconButton color="primary" component="label" onClick={() => handleClickOpenComments(row.id)}>
+                  <IconButton color="primary" component="label" onClick={() => handleClickOpenComments(row)}>
                     <InfoIcon />
                   </IconButton>
                 </TableCell>

@@ -35,7 +35,7 @@ export const dataProvider= {
         const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
         return httpClient(url).then(({ headers, json }) => {
-            let data = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
+            let data = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : [json]);
             Object.keys(data).map(function(key: any) {
                 if (!Array.isArray(data[key]) /*typeof data[key] == "object"*/) {
                     if (data[key].id === undefined) {

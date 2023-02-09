@@ -7,7 +7,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
     # reviewer = models.CharField(max_length=100)
     comment = models.TextField()
-    # rating = models.PositiveSmallIntegerField()
+    rating = models.FloatField(default=0)
 
     def __str__(self):
         return self.book
