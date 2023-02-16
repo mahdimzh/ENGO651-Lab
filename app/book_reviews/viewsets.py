@@ -10,6 +10,10 @@ from django.http import JsonResponse
 import json
 from rest_framework import status
 from rest_framework.decorators import action
+import requests
+import json
+from django.core.exceptions import BadRequest
+from rest_framework.exceptions import ValidationError
 
 class ExamplePagination(PageNumberPagination):
     page_size = 10
@@ -35,20 +39,27 @@ class BookReviewViewSet(viewsets.ModelViewSet):
         # queryset = self.get_queryset()
         book_id = None
         filters = self.request.query_params.get('filter', '')
-        if filters is not None and filters is not '':
+        if filters != None and filters != '':
             filters = json.loads(filters)
             book_id = filters['book_id']
 
         res = []
         with connection.cursor() as cursor: 
-            cursor.execute("SELECT brr.id, brr.comment, bb.isbn, bb.title, bb.author, bb.year, cuu.username, cuu.email FROM book_reviews_review brr LEFT JOIN books_book bb ON brr.book_id=bb.id LEFT JOIN core_user_user cuu ON cuu.id =brr.user_id where brr.book_id=%s order by brr.id desc", book_id )
+            cursor.execute("SELECT brr.id, brr.comment, bb.isbn, bb.title, bb.author, bb.year, cuu.username, cuu.email, brr.rating FROM book_reviews_review brr LEFT JOIN books_book bb ON brr.book_id=bb.id LEFT JOIN core_user_user cuu ON cuu.id =brr.user_id where brr.book_id=%s order by brr.id desc", book_id )
 
             rows = cursor.fetchall()
             for row in rows:
-                res.append({'id': row[0], 'comment': row[1], 'isbn': row[2], 'title': row[3], 'author': row[4], 'year': row[5], 'username': row[6], 'email': row[7]})
+                res.append({'id': row[0], 'comment': row[1], 'isbn': row[2], 'title': row[3], 'author': row[4], 'year': row[5], 'username': row[6], 'email': row[7], 'rating': row[8]})
 
         return JsonResponse({'data': res})
 
+    def if_user_put_comment_before(self, book_id, user_id):
+        with connection.cursor() as cursor: 
+            cursor.execute("SELECT COUNT(*) FROM book_reviews_review where book_id=%s and user_id=%s ", [book_id, user_id] )
+
+            obj = cursor.fetchone()
+
+        return obj[0] > 0
 
     def perform_create(self, serializer): 
         # author_id = self.request.data.get('author') 
@@ -58,20 +69,37 @@ class BookReviewViewSet(viewsets.ModelViewSet):
         # serializer.is_valid(raise_exception=True)
         # serializer.save(data=self.request.data)
         # headers = self.get_success_headers(serializer.data)
-        sql = "INSERT INTO book_reviews_review (comment, book_id, user_id, rating) VALUES (%s, %s, %s, %s)"
-        val = (self.request.data['comment'], self.request.data['book'], self.request.data['user'], self.request.data['rating'])
-        with connection.cursor() as cursor: 
-            cursor.execute(sql, val)
+        if self.if_user_put_comment_before(self.request.data['book'], self.request.data['user']) is False:
+            sql = "INSERT INTO book_reviews_review (comment, book_id, user_id, rating) VALUES (%s, %s, %s, %s)"
+            val = (self.request.data['comment'], self.request.data['book'], self.request.data['user'], self.request.data['rating'])
+            with connection.cursor() as cursor: 
+                cursor.execute(sql, val) 
 
-        # serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+ 
+        # return JsonResponse({'error': 'User submited comment before'}, status=400)
+        raise ValidationError({'message': 'User submited comment before'})
 
 
+    # def get_object(self):
+    #     lookup_field_value = self.kwargs[self.lookup_field]
 
-    def retrieve(self, request, *args, **kwargs):
-        book = self.get_object()
-        serializer = self.get_serializer(book)
-        return Response(serializer.data)
+    #     with connection.cursor() as cursor: 
+    #         cursor.execute("SELECT brr.id, brr.comment, bb.isbn, bb.title, bb.author, bb.year, cuu.username, cuu.email, brr.rating FROM book_reviews_review brr LEFT JOIN books_book bb ON brr.book_id=bb.id LEFT JOIN core_user_user cuu ON cuu.id =brr.user_id where bb.isbn=%s limit 1", lookup_field_value )
+
+    #         obj = cursor.fetchone()
+
+    #     # obj = Review.objects.get(id=lookup_field_value)
+    #     # self.check_object_permissions(self.request, obj)
+
+    #     return obj
+
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     book = self.get_object()
+    #     serializer = self.get_serializer(book)
+    #     return Response(serializer.data)
 
     # def get_object(self):
     #     lookup_field_value = self.kwargs[self.lookup_field]
@@ -97,7 +125,15 @@ class BookReviewViewSet(viewsets.ModelViewSet):
         # return JsonResponse({"comment": {'cosdfsdfmment': 'sdfsdf'}})
 
     @action(detail=False)
-    def custom_function(self, request):
+    def get_book_info_from_google(self, request):
+        filters = self.request.query_params.get('filter', '')
+        if filters != None and filters != '':
+            filters = json.loads(filters)
+            isbn = filters['isbn']
+
+        res = requests.get("https://www.googleapis.com/books/v1/volumes", params={"q": "isbn:{0}".format(isbn)})
         # your custom logic here
-        data = {"message": "Hello World"}
-        return Response(data)
+        # data = {"message": "Hello World"}
+        # print(json.loads(res.text))
+        return Response(res.json())
+
