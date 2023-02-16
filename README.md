@@ -1,4 +1,4 @@
-# ENGO651 - Lab 1 Assignment
+# ENGO651 - Lab 2 Assignment
 ## Mahdi Mohammadizadeh (30175778)
 ## Hadi Aghazadeh (30181045)
 
