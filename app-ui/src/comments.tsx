@@ -72,12 +72,12 @@ export default function Comments(props: any) {
 
         },
         (error: any) => {
-          notify('An Error Happen')
+          notify('This user has submited comment before')
 
         }
       )
       .catch((error: any) => {
-        notify('An Error Happen')
+        notify('This user has submited comment before')
       })
 
   }
@@ -108,10 +108,11 @@ export default function Comments(props: any) {
 
   React.useEffect(() => {
     if (props.open === true && props.book !== null) {
+      resetForm()
       reload()
     }
   }, [props]);
-  console.log(googleReview)
+
   return (
     <div>
       <Dialog
@@ -150,7 +151,54 @@ export default function Comments(props: any) {
 
         <DialogContent dividers={true}>
 
-          <Grid container spacing={2} style={{ textAlign: 'center' }}>
+          <Grid container spacing={2} style={{ textAlign: 'center', width: '100%' }}>
+            {props.book &&
+              <Grid xs={12}>
+                <b>Book details:</b>
+                <Grid container style={{ textAlign: 'left', marginTop: 5 }}>
+                  <Grid xs={6}>
+                    <b>ISBN:</b> {props.book.isbn}
+                  </Grid>
+                  <Grid xs={6}>
+                    <b>Title:</b> {props.book.title}
+                  </Grid>
+                  <Grid xs={6}>
+                    <b>Author:</b> {props.book.author}
+                  </Grid>
+                  <Grid xs={6}>
+                    <b>Year:</b> {props.book.year}
+                  </Grid>
+                  <Grid xs={12} style={{ textAlign: 'center', marginTop: 5 }}>
+                    <Divider />
+                    <b>Info from Google API...</b>
+
+                    {
+                      googleReview !== null && googleReview.totalItems > 0 &&
+                      googleReview.items.map((item: any, i: number) => (
+                        <List sx={{ width: '100%', bgcolor: 'background.paper', textAlign: 'left' }}>
+                          <Grid container spacing={2} style={{ margin: 0, marginTop: 5 }}>
+                            <Grid xs={6}>
+                              <b>Average Rating:</b> {item.volumeInfo.averageRating}
+                            </Grid>
+                            <Grid xs={6}>
+                              <b>Rating Count:</b> {item.volumeInfo.ratingsCount}
+                            </Grid>
+                          </Grid>
+                        </List>
+                      ))
+                    }
+                    {
+                      (googleReview === null || googleReview.totalItems == 0) &&
+                      <div style={{ textAlign: 'center', marginTop: 5 }}>
+                        No more information
+                      </div>
+                    }
+                  </Grid>
+                </Grid>
+                <Divider />
+
+              </Grid>
+            }
             <Grid xs={12}>
               <TextField
                 id="filled-multiline-static"
@@ -183,30 +231,7 @@ export default function Comments(props: any) {
             <Divider />
 
             <Grid item xs={12}>
-              <div style={{ textAlign: 'left', fontWeight: 'bold' }}>
-                Info from Google API...
-                {
-                  googleReview !== null && googleReview.totalItems > 0 &&
-                  googleReview.items.map((item: any, i: number) => (
-                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                      <Grid container spacing={2} style={{ textAlign: 'center', marginTop: 5 }}>
-                        <Grid xs={6}>
-                          Average Rating: {item.volumeInfo.averageRating}
-                        </Grid>
-                        <Grid xs={6}>
-                          Rating Count: {item.volumeInfo.ratingsCount}
-                        </Grid>
-                      </Grid>
-                    </List>
-                  ))
-                }
-                {
-                  (googleReview === null || googleReview.totalItems == 0) &&
-                  <div style={{ textAlign: 'center', marginTop: 5 }}>
-                    No more information
-                  </div>
-                }
-              </div>
+
               <Divider />
               <div style={{ textAlign: 'left', fontWeight: 'bold', marginTop: 5 }}>
                 Other Comments...

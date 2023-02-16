@@ -21,13 +21,15 @@ import Button from '@mui/material/Button';
 // import { dataProvider } from './dataProvider'
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { useNotify } from 'react-admin';
 
 export default function Books() {
   const dataProvider = useDataProvider();
   const [openComments, setOpenComments] = React.useState(false);
   const [openFilters, setOpenFilters] = React.useState(false);
   const [book, setBook] = React.useState(null);
-  
+  const notify = useNotify();
+
   const [filters, setFilters] = React.useState({
     isbn: '',
     title: '',
@@ -46,18 +48,23 @@ export default function Books() {
     setOpenComments(false);
   };
 
-  const handleDeleteFilter = (filter : string) => {
-    setFilters({...filters, [filter]: ''})
+  const handleDeleteFilter = (filter: string) => {
+    setFilters({ ...filters, [filter]: '' })
     setOpenFilters(true)
 
   }
-
   const reload = () => {
     dataProvider.getList('books', {
       pagination: { page: 0, perPage: 0 },
       sort: { field: '', order: '' },
       filter: filters,
-    }).then(res => setBooks(res.data as []))
+    }).then((res) => {
+      if (res.data.length == 0) {
+        notify('We could not find any book with these filters')
+
+      }
+      setBooks(res.data as [])
+    })
 
     setOpenFilters(false)
   }
@@ -124,7 +131,7 @@ export default function Books() {
         <IconButton color="primary" aria-label="filter" component="label" onClick={() => setOpenFilters(true)}>
           <FilterListIcon />
         </IconButton>
-        <Stack direction="row" spacing={1} style={{padding: 5}}>
+        <Stack direction="row" spacing={1} style={{ padding: 5 }}>
           {
             filters.isbn &&
             <Chip label={`Isbn: ${filters.isbn}`} onDelete={() => handleDeleteFilter('isbn')} />
