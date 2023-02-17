@@ -7,8 +7,9 @@
 # Book Review Website 
 
 ## Overview 
-
-This is a book review website built using Django, React, and MySQL. The website allows users to search books by ISBN, author name, or any other keywords. Users can also select a book and leave a comment or read comments left by others. The website has a signup and sign-in form to authenticate users. 
+This repo is an extension for Lab 1.
+This is a book review website built using Django, React, and MySQL. The website allows users to search books by ISBN, author name, or any other keywords. Users can also select a book and leave a comment or read comments left by others. The website has a signup and sign-in form to authenticate users.
+As an extension, users have access to Good reads API and can see the average rate and number od rates for each book. Moreover, users can leave their own rate to a book and they are not allowed to leave more than one comment or rate for each book.
 
  
 
