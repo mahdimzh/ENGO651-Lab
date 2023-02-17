@@ -34,7 +34,13 @@ As an extension, users have access to Good reads API and can see the average rat
 
 - Leave comments or read comments left by others on a book 
 
-- Signup and sign-in form for user authentication 
+- Signup and sign-in form for user authentication
+
+- Access to the Good Reads API (Average rate and number of rates) for each Book
+
+- Users can submit their own rate for each book
+
+- Users are not allowed to leave more than one comment for each book
 
 ## Components 
 
