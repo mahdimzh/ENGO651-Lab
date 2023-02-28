@@ -18,7 +18,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { dataProvider } from './dataProvider'
+import { dataProvider } from '../dataProvider'
 import { useNotify } from 'react-admin';
 import Rating from '@mui/material/Rating';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,7 +31,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
-
+ 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;

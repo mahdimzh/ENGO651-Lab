@@ -51,9 +51,11 @@ INSTALLED_APPS = [
     # 'django.contrib.staticfiles',
 
      # my apps
-    'books.apps.BooksConfig',
     # 'users.apps.UsersConfig',
+    'books.apps.BooksConfig',
     'book_reviews.apps.BookReviewsConfig',
+    'building_permit.apps.BuildingPermitConfig',
+    
     'rest_framework',
     'core',
     'core.user',
