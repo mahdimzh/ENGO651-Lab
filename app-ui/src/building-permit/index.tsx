@@ -41,7 +41,7 @@ function App() {
 	const [points, setPoints] = React.useState([]);
 
 	const [openFilters, setOpenFilters] = React.useState(false);
-	const [loading, setLoading] = React.useState(true);
+	const [loading, setLoading] = React.useState(false);
 
 	const filtersInit = {
 		issueDateEnd: null,
@@ -56,7 +56,7 @@ function App() {
 
 	const resetMap = () => {
 		setPoints([])
-		setLoading(true)
+		// setLoading(true)
 		setFilters(filtersInit)
 	}
 
@@ -135,7 +135,7 @@ function App() {
 
 			</Drawer>
 			<div style={{ display: 'flex' }}>
-				<h1>Calgary Building Permits Map: Number of points ({points.length})
+				<h1>Calgary Building Permits Map: Number of points ({points.filter((point) => point.geometry !== null).length})
 					<IconButton color="primary" aria-label="filter" component="label" onClick={() => {  setOpenFilters(true) }}>
 						<FilterListIcon />
 					</IconButton>
