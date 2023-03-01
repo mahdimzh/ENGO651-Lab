@@ -1,7 +1,6 @@
 import React from "react";
 import L, { MarkerCluster } from "leaflet";
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
-import { addressPoints } from "./realworld";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import Drawer from '@mui/material/Drawer';
