@@ -3,3 +3,4 @@ flask_session/
 __pycache__
 .vscode
 app-ui/public/config.js
+nohup.out
