@@ -9,6 +9,7 @@ import { Route } from "react-router-dom";
 import Register from './register'
 import Books from './book/books'
 import BuildingPermit from './building-permit'
+import MapLayer from './map-layer'
 import { MyLayout } from './layout';
 import Login from './login'
 
@@ -33,7 +34,12 @@ const App = () => (
     <CustomRoutes>
       <Route path="/building-permits" element={<BuildingPermit />} />
     </CustomRoutes>
+    <CustomRoutes>
+      <Route path="/map-layer" element={<MapLayer />} />
+    </CustomRoutes>
 
+
+    
   </Admin>
 );
 
