@@ -208,7 +208,7 @@ function App() {
 
 	const connect = () => {
 		if (client === undefined) {
-			createConnection(connection.host, connection.port, connection.clientId, connection.path, connection.onConnectionLost, connection.onMessageArrived)
+			createConnection(connection.host, Number(connection.port), connection.clientId, connection.path, connection.onConnectionLost, connection.onMessageArrived)
 		}
 
 		if (client !== undefined && !client.isConnected()) {
