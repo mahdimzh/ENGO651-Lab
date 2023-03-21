@@ -235,12 +235,16 @@ function App() {
 	}, []);
 
 	React.useEffect(() => {
-		console.log(client)
 		if (client !== undefined) {
 			setReconnect(true)
 			connect()
 		}
 	}, [client]);
+
+	 
+	if (client !== undefined) {
+		console.log(client.isConnected())
+	}
 
 	return (
 		<React.Fragment>
