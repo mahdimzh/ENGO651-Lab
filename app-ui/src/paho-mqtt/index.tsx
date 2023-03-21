@@ -250,7 +250,7 @@ function App() {
 
 			</div>
 			{client !== undefined &&
-				<div style={{ width: '100%' }}>
+				<div style={{ width: '100%', display: 'flex' }}>
 					<Button variant="outlined" color="error" style={{ width: '97%' }} onClick={(e) => removeConnection()}>
 						Remove Connection
 					</Button>
@@ -415,7 +415,7 @@ function App() {
 
 
 					<Grid container spacing={2} style={{ marginTop: 20 }}>
-						<Grid item xs={4}>
+						<Grid item xs={12} md={4}>
 							<Item>
 								<FormControl sx={{ m: 1, width: '80%' }} variant="outlined">
 									<InputLabel htmlFor="">Enter a topic</InputLabel>
@@ -461,7 +461,7 @@ function App() {
 
 							</Item>
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={12} md={8}>
 							<Item>
 								<List dense={true}>
 									{
