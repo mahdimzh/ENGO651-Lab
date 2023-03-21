@@ -10,6 +10,7 @@ import Register from './register'
 import Books from './book/books'
 import BuildingPermit from './building-permit'
 import MapLayer from './map-layer'
+import PahoMqtt from './paho-mqtt'
 import { MyLayout } from './layout';
 import Login from './login'
 
@@ -36,6 +37,9 @@ const App = () => (
     </CustomRoutes>
     <CustomRoutes>
       <Route path="/map-layer" element={<MapLayer />} />
+    </CustomRoutes>
+    <CustomRoutes>
+      <Route path="/paho-mqtt" element={<PahoMqtt />} />
     </CustomRoutes>
 
 
