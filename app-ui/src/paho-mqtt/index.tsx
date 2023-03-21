@@ -47,7 +47,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 function App() {
-	const [openSnackBar, setOpenSnackBar] = React.useState(false);
+	const snackBar = {
+		text: '',
+		severity: 'info',
+		open: false
+	}
+	const [openSnackBar, setOpenSnackBar] = React.useState(snackBar);
+
 	const [reconnect, setReconnect] = React.useState(false);
 	const [connected, setCnnected] = React.useState(false);
 
@@ -63,8 +69,14 @@ function App() {
 	});
 
 
-	const handleOpenSnackBar = () => {
-		setOpenSnackBar(true);
+	const handleOpenSnackBar = (text: string, severity: string) => {
+		setOpenSnackBar({
+			...openSnackBar,
+			open: true,
+			text: text,
+			severity: severity,
+		})
+
 	};
 
 	const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -72,7 +84,7 @@ function App() {
 			return;
 		}
 
-		setOpenSnackBar(false);
+		setOpenSnackBar(snackBar);
 	};
 
 	const [client, setClient] = React.useState<any>(undefined);
@@ -93,6 +105,7 @@ function App() {
 
 	const handleCloseCreateConnection = () => {
 		setCreateConnectionOpen(false);
+		setConnection(initConnection)
 	};
 
 	const clientConnected = () => client !== undefined && connected
@@ -108,7 +121,10 @@ function App() {
 	}
 
 	const removeConnection = () => {
-		client.disconnect()
+		try {
+			client.disconnect()
+		} catch (error) {}
+
 		setClient(undefined)
 		setTopic('')
 		setMessage(initMessage)
@@ -126,7 +142,7 @@ function App() {
 		
 		//setClient(undefined)   
 		if (reconnect) {
-			handleOpenSnackBar()
+			handleOpenSnackBar('Connection loss. Try to reconnect...', 'info')
 			connect()
 		}
 	}
@@ -146,14 +162,15 @@ function App() {
 		}
 	}
 
-	const [connection, setConnection] = React.useState({
+	const initConnection = {
 		host: 'test.mosquitto.org',
 		port: 8081,
 		clientId: 'client',
 		path: '/ws',
 		onConnectionLost: handleConnectionLost,
 		onMessageArrived: handleMessageArrived,
-	});
+	}
+	const [connection, setConnection] = React.useState(initConnection);
 
 	const subscribeTopic = (topic: any) => {
 		if (clientConnected()) {
@@ -183,6 +200,11 @@ function App() {
 		setCnnected(true)
 	}
 
+	const onFailure = (e: any) => {
+		handleOpenSnackBar('Failed to connect. try again with different url', 'error')
+		removeConnection();
+	}
+
 
 	const connect = () => {
 		if (client === undefined) {
@@ -191,7 +213,7 @@ function App() {
 
 		if (client !== undefined && !client.isConnected()) {
 			console.info('try connecting...')
-			client.connect({ onSuccess: onConnect, mqttVersion: 3 });
+			client.connect({ onSuccess: onConnect, mqttVersion: 3, reconnect: true, onFailure: onFailure });
 			subscriptions.map(s => subscribeTopic(s))
 		}
 	}
@@ -238,6 +260,7 @@ function App() {
 
 	}, []);
 
+
 	React.useEffect(() => {
 		if (client !== undefined) {
 			setReconnect(true)
@@ -246,10 +269,6 @@ function App() {
 	}, [client]);
 
 	 
-	if (client !== undefined) {
-		console.log(client.isConnected())
-	}
-
 	return (
 		<React.Fragment>
 			<div style={{ display: 'flex' }}>
@@ -290,9 +309,9 @@ function App() {
 
 			}
 
-			<Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
-				<Alert onClose={handleCloseSnackBar} severity="info" sx={{ width: '100%' }}>
-					Connection loss. Try to reconnect...
+			<Snackbar open={openSnackBar.open} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+				<Alert onClose={handleCloseSnackBar} severity={openSnackBar.severity} sx={{ width: '100%' }}>
+					{openSnackBar.text}
 				</Alert>
 			</Snackbar>
 
