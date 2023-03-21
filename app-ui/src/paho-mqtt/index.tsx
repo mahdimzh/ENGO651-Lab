@@ -187,6 +187,7 @@ function App() {
 		}
 
 		if (client !== undefined && !client.isConnected()) {
+			console.info('try connecting...')
 			client.connect({ onSuccess: onConnect, mqttVersion: 3 });
 			subscriptions.map(s => subscribeTopic(s))
 		}
