@@ -120,6 +120,8 @@ function App() {
 
 
 	const handleConnectionLost = (e: any) => {
+		console.error('disconnected')
+
 		setCnnected(false)
 		
 		//setClient(undefined)   
@@ -177,6 +179,7 @@ function App() {
 	}
 
 	const onConnect = (e: any) => {
+		console.info('connected')
 		setCnnected(true)
 	}
 
