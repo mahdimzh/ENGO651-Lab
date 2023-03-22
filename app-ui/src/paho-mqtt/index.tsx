@@ -217,7 +217,7 @@ function App() {
 
 		if (client !== undefined && !client.isConnected()) {
 			console.info('try connecting...')
-			client.connect({ onSuccess: onConnect, mqttVersion: connection.version, reconnect: true, onFailure: onFailure });
+			client.connect({ onSuccess: onConnect, mqttVersion: connection.version, reconnect: true, onFailure: onFailure, useSSL: true });
 			subscriptions.map(s => subscribeTopic(s))
 		}
 	}
