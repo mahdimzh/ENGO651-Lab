@@ -30,6 +30,8 @@ import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import SignalWifiStatusbar4BarIcon from '@mui/icons-material/SignalWifiStatusbar4Bar';
 import SignalWifiOffIcon from '@mui/icons-material/SignalWifiOff';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -123,7 +125,7 @@ function App() {
 	const removeConnection = () => {
 		try {
 			client.disconnect()
-		} catch (error) {}
+		} catch (error) { }
 
 		setClient(undefined)
 		setTopic('')
@@ -139,7 +141,7 @@ function App() {
 		console.error('disconnected')
 
 		setCnnected(false)
-		
+
 		//setClient(undefined)   
 		if (reconnect) {
 			handleOpenSnackBar('Connection loss. Try to reconnect...', 'info')
@@ -167,6 +169,7 @@ function App() {
 		port: 8081,
 		clientId: 'client',
 		path: '/ws',
+		version: 3,
 		onConnectionLost: handleConnectionLost,
 		onMessageArrived: handleMessageArrived,
 	}
@@ -211,9 +214,10 @@ function App() {
 			createConnection(connection.host, Number(connection.port), connection.clientId, connection.path, connection.onConnectionLost, connection.onMessageArrived)
 		}
 
+		console.log(connection)
 		if (client !== undefined && !client.isConnected()) {
 			console.info('try connecting...')
-			client.connect({ onSuccess: onConnect, mqttVersion: 3, reconnect: true, onFailure: onFailure });
+			client.connect({ onSuccess: onConnect, mqttVersion: connection.version, reconnect: true, onFailure: onFailure });
 			subscriptions.map(s => subscribeTopic(s))
 		}
 	}
@@ -268,7 +272,7 @@ function App() {
 		}
 	}, [client]);
 
-	 
+
 	return (
 		<React.Fragment>
 			<div style={{ display: 'flex' }}>
@@ -342,6 +346,22 @@ function App() {
 						variant="standard"
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => setConnection({ ...connection, port: Number(event.target.value) })}
 					/>
+					
+					<FormControl fullWidth style={{display: 'none'}}>
+						<InputLabel id="demo-simple-select-label">Mqtt Version</InputLabel>
+						<Select
+							labelId="demo-simple-select-label"
+							id="demo-simple-select"
+							value={connection.version }
+							
+							label="Mqtt Version"
+							onChange={(event: SelectChangeEvent) => setConnection({ ...connection, version: Number(event.target.value as string) })}
+							>
+							<MenuItem value={3}>3</MenuItem>
+							<MenuItem value={5}>5</MenuItem>
+						</Select>
+					</FormControl>
+
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseCreateConnection}>Cancel</Button>
