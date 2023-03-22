@@ -114,7 +114,7 @@ function App() {
 
 
 	const createConnection = (host: any, port: any, clientId: any, path: any, onConnectionLost: any, onMessageArrived: any) => {
-		const c = new Paho.Client(host, port, path, clientId);
+		const c = new Paho.Client(host, Number(port), path, clientId + "-" + Math.random());
 		// set callback handlers
 		c.onConnectionLost = onConnectionLost;
 		c.onMessageArrived = onMessageArrived;
@@ -214,7 +214,7 @@ function App() {
 			createConnection(connection.host, Number(connection.port), connection.clientId, connection.path, connection.onConnectionLost, connection.onMessageArrived)
 		}
 
-		console.log(connection)
+
 		if (client !== undefined && !client.isConnected()) {
 			console.info('try connecting...')
 			client.connect({ onSuccess: onConnect, mqttVersion: connection.version, reconnect: true, onFailure: onFailure });
