@@ -1,26 +1,21 @@
-# ENGO651 - Lab 4 Assignment
+# ENGO651 - Lab 5 Assignment
 ## Mahdi Mohammadizadeh (30175778)
 ## Hadi Aghazadeh (30181045)
 
-#
-
-# Web mapping application about Car accidents in Calgary.
+# Web mapping application to turn any smartphone into an IoT sensor.
 
 ## Overview 
-The objective of lab 4 assignment is to:
+The objective of lab 5 assignment is to:
 
-- Create a Mapbox Vector Tiles and Mapbox Studio.
+- Turn any smartphone into an IoT sensor
 
-- Design a visually appealing map layer.
+- Build a simple web mapping application
 
-- Integrate a vector tileset to an existing GeoWeb application.
+- Visualize the location of the smartphone sensor. 
 
-This is an extension for Lab 3 in which we develop a web mapping application focused on "building permits" in Calgary, which builds on the previous Book Review assignments. Upon logging in, users will notice a new "Building Permit" tab in the dashboard menu. By clicking on the tab, users will be presented with a map of Calgary that is automatically zoomed in. The map displays the total number of building permits in the area. As users zoom in on the map, they can see clusters of building permits, which can be expanded to display individual permit points. By clicking on a point, users can access relevant information about that specific permit. Additionally, users can filter the date range to view permits that were issued within a specific time frame. The date selector widget is accessible by clicking on the filter button. By selecting a particular date range, the total number of permit points on the map will adjust accordingly, displaying only the relevant points. The data for this project is available through the Open Calgary API.
+##MQTT
+MQTT stands for Message Queuing Telemetry Transport which is known as one of the most used protocols in IoT networks. MQTT is designed to enable Machine to Machine communication in a publish/subscribe architecture. You will no longer need to stack your messages in the queue and wait for a response to send other messages to a server. MQTT is a lightweight protocol that can work in low-bandwidth networks as well as networks with various latency levels. One of the most popular applications of MQTT is to get the latest changes in devices/sensors' status and visualize them on a web client application. In this project, we get the latest location of mobile device by MQTT protocol and visualize it on the map.
 
-For lab 4, we mash up a styled vector tileset hosted on Mapbox with a web mapping application developed in the lab 3. Users are able to load and visualize a different map layer (e.g., a Mapbox style) from our Mapbox account. They can use Mapbox to design and publish the map layer. Users also are able to toggle on and off the new layer based on their choice and preference.
-
-
- 
 
 ## Technologies Used 
 
@@ -36,20 +31,17 @@ For lab 4, we mash up a styled vector tileset hosted on Mapbox with a web mappin
 
 - Leaflet.js
 
-- MapBox
+- MQTT
 
 
-## Features 
+## Features
 
-- Develop a web mapping application for "car accident" in Calgary.
-- The assignment builds on previous assignments (Building Premits).
-- Upon logging in, a new "Map Layer" tab is added to the dashboard menu.
-- Calgary car accident data is turned into a map layer in mapbox
-- Users should be able to toggle on/off the map layer when visiting the site.
-- A visually appealing map layer is design in which main roads has a deep red, main streets has a middle red and narrow alleys are shown with ligh red. The background color is also ligh blue.
-- Due to the fact that most of the accidents have happend in main roads and streets, narrow alleys are also blured and their opacity is reduced to help users focus on the main goal of this project which is car accidents in calgary.
-- There are two layers (Basic openstreetmap layer, and customized layer)
-- New customized icon is used to show the car accidents in a more appealing way
+- Users are able to determine the MQTT message broker host and port
+- The web application have a Start/End button to establish/finish a connection with the MQTT message broker
+- If the user pushed the start button, he would no longer be able to determine host and port values unless he/she clicks on the End button.
+- In case of disconnection, users should receive a proper message and the web application should automatically re-establish the connection.
+- Users should be able to publish any messages to any topics they want and you should show in your demo if MQTTX can subscribe to the topic and read the message that users have just published.
+- You should include the “share my status” button in your app. When a user pushes the button, a Geojson message is generated. The Geojson includes your current location and a random value for the temperature.
 
 ## Components 
 
@@ -70,7 +62,7 @@ The project has the following apps and components:
     
     - Leaflet.js: The JavaScript library for interactive maps. Leaflet is one of the most popular web mapping APIs.
     
-    - MapBox: Mapbox is a platform that provides mapping and location-based services. It offers developers tools for creating custom maps, geocoding and routing, and integrating location-based features into applications. Mapbox also provides map data, which can be used to create custom maps and visualizations.
+    - MQTT: MQTT stands for Message Queuing Telemetry Transport which is known as one of the most used protocols in IoT networks.
 
 -   Docker: For deployment, a docker compose file has been created that has all the necessary requirements to deploy the app. 
 
@@ -83,7 +75,7 @@ The project has been dockerized for easy deployment. To run the project, you nee
 Clone the repository: 
 
 
-`git clone git@github.com:mahdimzh/ENGO651-Lab1.git `
+`git clone git@github.com:mahdimzh/ENGO651-Lab.git `
 
 
 Navigate to the project directory: 
