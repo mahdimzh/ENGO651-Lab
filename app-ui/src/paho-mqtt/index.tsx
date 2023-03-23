@@ -375,7 +375,7 @@ function App() {
 
 			{
 				client !== undefined &&
-				<div>
+				<div >
 					<Box
 						component="form"
 						noValidate
@@ -424,7 +424,7 @@ function App() {
 					</Box>
 
 					<MapContainer
-						style={{ height: "80%" }}
+						style={{ height: "250px" }}
 						center={[51.0447, -114.0719]}
 						zoom={10}
 						scrollWheelZoom={true}
@@ -462,7 +462,7 @@ function App() {
 					</MapContainer>
 
 
-					<Grid container spacing={2} style={{ marginTop: 20 }}>
+					<Grid container spacing={2} style={{height: '100%', overflow: 'auto', marginTop: 20}}>
 						<Grid item xs={12} md={4}>
 							<Item>
 								<FormControl sx={{ m: 1, width: '80%' }} variant="outlined">
