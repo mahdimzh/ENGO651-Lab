@@ -386,7 +386,7 @@ function App() {
 								required
 								style={{ marginRight: 10, width: '100%' }}
 								id="outlined-required"
-								label="Required"
+								label="Topic"
 								value={message.topic}
 								onChange={(event: React.ChangeEvent<HTMLInputElement>) => setMessage({ ...message, topic: event.target.value })}
 							/>
@@ -412,7 +412,8 @@ function App() {
 						<div style={{ width: '100%' }}>
 							<TextField
 								id="outlined-multiline-static"
-								label="Multiline"
+								label="Message"
+								required
 								multiline
 								rows={4}
 								style={{ width: '100%' }}
