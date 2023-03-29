@@ -54,6 +54,7 @@ function App() {
 
 
 	const onDeleted = (e: any) => {
+		console.log(e)
 		setSimplifiedList({})
 	}
 
@@ -61,13 +62,12 @@ function App() {
 		console.log(e)
 		const layers = e.layers._layers;
 		Object.keys(layers).forEach((layerid, index) => {
-
 			const layer = layers[layerid];
 			const simplified = generateSimplified(layer.editing.latlngs[0][0].map((latLng: { lat: any; lng: any; }) => [latLng.lat, latLng.lng]));
-			setSimplifiedList({
+			setSimplifiedList((simplifiedList: any) => ({
 				...simplifiedList,
-				[index]: simplified,
-			});	
+				[layerid]: simplified,
+			}))
 
 		});
 	}
@@ -77,11 +77,11 @@ function App() {
 		if (e.layer.editing.latlngs[0] !== undefined && e.layer.editing.latlngs[0][0] !== undefined) {
 			const simplified = generateSimplified(e.layer.editing.latlngs[0][0].map((latLng: { lat: any; lng: any; }) => [latLng.lat, latLng.lng]));
 
-			setSimplifiedList({
+			setSimplifiedList((simplifiedList: any) => ({
 				...simplifiedList,
 				[e.layer._leaflet_id]: simplified,
-			});	
-
+			}))
+			
 
 		}
 
@@ -98,6 +98,7 @@ function App() {
 		// 	}
 		// }
 	};
+
 
 	const onFeatureGroupReady = (reactFGref: React.SetStateAction<null>) => {
 		// setEditableFG(reactFGref);
