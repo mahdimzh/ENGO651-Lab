@@ -1,20 +1,19 @@
-# ENGO651 - Lab 5 Assignment
+# ENGO651 - Lab 6 Assignment
 ## Mahdi Mohammadizadeh (30175778)
 ## Hadi Aghazadeh (30181045)
 
-# Web mapping application to turn any smartphone into an IoT sensor.
+# Web mapping application to draw a polygone and edit it.
 
 ## Overview 
-The objective of lab 5 assignment is to:
+The objective of lab 6 assignment is to:
 
-- Turn any smartphone into an IoT sensor
+- Draw a polyline on the map by clicking and dragging.
 
-- Build a simple web mapping application
+- Click the "Simplify" button to simplify the drawn polyline.
 
-- Visualize the location of the smartphone sensor. 
+- Click the "Clear" button to remove the drawn polyline from the map and draw a new polyline.
 
-##MQTT
-MQTT stands for Message Queuing Telemetry Transport which is known as one of the most used protocols in IoT networks. MQTT is designed to enable Machine to Machine communication in a publish/subscribe architecture. You will no longer need to stack your messages in the queue and wait for a response to send other messages to a server. MQTT is a lightweight protocol that can work in low-bandwidth networks as well as networks with various latency levels. One of the most popular applications of MQTT is to get the latest changes in devices/sensors' status and visualize them on a web client application. In this project, we get the latest location of mobile device by MQTT protocol and visualize it on the map.
+This project aims to provide an understanding of line simplification in web mapping applications by using Turf.js. Users will be able to draw a polyline on the map, and when they click on the "simplify button," a simplified version of the polyline will be displayed in a different color.
 
 
 ## Technologies Used 
@@ -31,17 +30,16 @@ MQTT stands for Message Queuing Telemetry Transport which is known as one of the
 
 - Leaflet.js
 
-- MQTT
+- Turf.js
 
 
 ## Features
 
-- Users are able to determine the MQTT message broker host and port
-- The web application have a Start/End button to establish/finish a connection with the MQTT message broker
-- If the user pushed the start button, he would no longer be able to determine host and port values unless he/she clicks on the End button.
-- In case of disconnection, users should receive a proper message and the web application should automatically re-establish the connection.
-- Users should be able to publish any messages to any topics they want and you should show in your demo if MQTTX can subscribe to the topic and read the message that users have just published.
-- You should include the “share my status” button in your app. When a user pushes the button, a Geojson message is generated. The Geojson includes your current location and a random value for the temperature.
+- Users are able to draw an aribtrary polygones
+- A simplifed version of that polygone can be shown based on user preference
+- Users can edit the polygone, and simplified version will be updated accordingly
+- Users are able to draw multi polygones at the same time and their simplified version will be shown to them
+- Users can delete the polygone and the change will be apply online
 
 ## Components 
 
@@ -62,7 +60,7 @@ The project has the following apps and components:
     
     - Leaflet.js: The JavaScript library for interactive maps. Leaflet is one of the most popular web mapping APIs.
     
-    - MQTT: MQTT stands for Message Queuing Telemetry Transport which is known as one of the most used protocols in IoT networks.
+    - Turf.js: Turf.js is a JavaScript library for spatial analysis and geospatial data processing. It provides a wide range of functions for working with geographic data, including geospatial operations, such as buffering, intersecting, and simplifying, as well as more advanced analytics, such as clustering and spatial joins.
 
 -   Docker: For deployment, a docker compose file has been created that has all the necessary requirements to deploy the app. 
 
