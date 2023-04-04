@@ -146,6 +146,7 @@ function App() {
 
 			})
 			.catch((error) => {
+				setLoading(false);
 				handleOpenSnackBar('An error happen while finding the route', 'error')
 			})
 		// setTimeout(() => {
