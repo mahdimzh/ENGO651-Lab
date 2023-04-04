@@ -14,6 +14,7 @@ import PahoMqtt from './paho-mqtt'
 import TurfSimplify from './turf-simplify'
 import { MyLayout } from './layout';
 import Login from './login'
+import RouteRecommendation from './route-recommendation'
 
 // const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
 
@@ -45,6 +46,10 @@ const App = () => (
     <CustomRoutes>
       <Route path="/turf-simplify" element={<TurfSimplify />} />
     </CustomRoutes>
+    <CustomRoutes>
+      <Route path="/route-recommendation" element={<RouteRecommendation />} />
+    </CustomRoutes>
+
     
 
     

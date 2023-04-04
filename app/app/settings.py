@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'books.apps.BooksConfig',
     'book_reviews.apps.BookReviewsConfig',
     'building_permit.apps.BuildingPermitConfig',
+    'route_recommendation.apps.RouteRecommendationConfig',
     
     'rest_framework',
     'core',

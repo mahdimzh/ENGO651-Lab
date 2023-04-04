@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/lab": "^5.0.0-alpha.125",
     "@mui/x-date-pickers": "^5.0.20",
     "@turf/buffer": "^6.5.0",
     "@turf/collect": "^6.5.0",

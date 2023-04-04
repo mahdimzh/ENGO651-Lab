@@ -4,6 +4,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import RouteIcon from '@mui/icons-material/Route';
 import PolylineIcon from '@mui/icons-material/Polyline';
+import AltRouteIcon from '@mui/icons-material/AltRoute';
 
 export const MyMenu = () => (
     <Menu>
@@ -13,7 +14,8 @@ export const MyMenu = () => (
         <Menu.Item to="/map-layer" primaryText="Map Layer" leftIcon={<DynamicFeedIcon />}/>
         <Menu.Item to="/paho-mqtt" primaryText="Paho MQTTX" leftIcon={<RouteIcon />}/>
         <Menu.Item to="/turf-simplify" primaryText="Turf Simplify" leftIcon={<PolylineIcon />}/>
+        <Menu.Item to="/route-recommendation" primaryText="Routing" leftIcon={<AltRouteIcon />}/>
     </Menu>
 );
 
-import PahoMqtt from './paho-mqtt'
+

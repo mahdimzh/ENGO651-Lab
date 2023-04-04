@@ -8,3 +8,8 @@ djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
 requests
+networkx
+osmnx
+numpy
+scikit-learn
+shapely
