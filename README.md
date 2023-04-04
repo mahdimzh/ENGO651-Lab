@@ -106,7 +106,7 @@ To start the app-ui:
 
 `cd app-ui`
 
-`npm install`
+`npm install  --legacy-peer-deps`
 
 `yarn dev`
 
