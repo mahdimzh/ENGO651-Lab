@@ -32,20 +32,25 @@ class PathFinder:
         return exp_x / sum_exp_x
 
     def normalize_weights(self,x1, x2, x3):
-        # Normalize each metric between 0 and 1
-        # division by zero 
-        x1_norm = (x1 - min(x1, x2, x3)) / (max(x1, x2, x3) - min(x1, x2, x3))
-        x2_norm = (x2 - min(x1, x2, x3)) / (max(x1, x2, x3) - min(x1, x2, x3))
-        x3_norm = (x3 - min(x1, x2, x3)) / (max(x1, x2, x3) - min(x1, x2, x3))
+        # Find the minimum and maximum values of the metrics
+        min_val = min(x1, x2, x3)
+        max_val = max(x1, x2, x3)
         
+        # Normalize each metric between 0 and 1, avoiding division by zero
+        if max_val == min_val:
+            x1_norm = x2_norm = x3_norm = 1/3  # set equal weights if all inputs are equal
+        else:
+            x1_norm = (x1 - min_val) / (max_val - min_val)
+            x2_norm = (x2 - min_val) / (max_val - min_val)
+            x3_norm = (x3 - min_val) / (max_val - min_val)
         # Ensure the weights add up to 1
         sum_norm = x1_norm + x2_norm + x3_norm
         x1_norm_final = x1_norm / sum_norm
         x2_norm_final = x2_norm / sum_norm
         x3_norm_final = x3_norm / sum_norm
-        
         # Return the normalized weights
         return x1_norm_final, x2_norm_final, x3_norm_final
+    
 
         
     def find_best_path(self, start_point, end_point,distance_weight,weather_weight,emission_weight):

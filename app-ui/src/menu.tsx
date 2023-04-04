@@ -14,7 +14,7 @@ export const MyMenu = () => (
         <Menu.Item to="/map-layer" primaryText="Map Layer" leftIcon={<DynamicFeedIcon />}/>
         <Menu.Item to="/paho-mqtt" primaryText="Paho MQTTX" leftIcon={<RouteIcon />}/>
         <Menu.Item to="/turf-simplify" primaryText="Turf Simplify" leftIcon={<PolylineIcon />}/>
-        <Menu.Item to="/route-recommendation" primaryText="Routing" leftIcon={<AltRouteIcon />}/>
+        <Menu.Item to="/route-recommendation" primaryText="Routing (Final Project)" leftIcon={<AltRouteIcon />}/>
     </Menu>
 );
 
