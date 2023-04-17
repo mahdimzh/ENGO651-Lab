@@ -217,6 +217,7 @@ function App() {
 			setFilters({
 				...filters,
 				startPoint: marker.getLatLng(),
+				currentPoint: marker.getLatLng(),
 			})
 
 		}
@@ -408,6 +409,18 @@ function App() {
 							<Polyline key={i} positions={points} color="Navy" weight={4} lineCap="square" />
 						))}
 					</Pane>
+					<Marker
+						icon={movingIcon}
+						draggable={false}
+						position={filters.currentPoint}
+
+					>
+						<Popup minWidth={90}>
+							<span >
+								Our Location
+							</span>
+						</Popup>
+					</Marker>
 
 					<Marker
 						icon={customStartIcon}
@@ -418,18 +431,6 @@ function App() {
 						<Popup minWidth={90}>
 							<span >
 								Start Point
-							</span>
-						</Popup>
-					</Marker>
-					<Marker
-						icon={movingIcon}
-						draggable={false}
-						position={filters.currentPoint}
-
-					>
-						<Popup minWidth={90}>
-							<span >
-								Our Location
 							</span>
 						</Popup>
 					</Marker>
