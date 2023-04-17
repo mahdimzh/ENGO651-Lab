@@ -20,6 +20,9 @@ import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
 import L from "leaflet";
+import IconButton from '@mui/material/IconButton';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import Button from '@mui/material/Button';
 
 
 
@@ -48,6 +51,11 @@ const customStartIcon = new L.Icon({
 	iconSize: new L.Point(40, 47)
 });
 
+const movingIcon = new L.Icon({
+	iconUrl: './truck.png',
+	iconSize: new L.Point(40, 47)
+});
+
 function App() {
 	const dataProvider = useDataProvider();
 	const [graphLoaded, setGraphLoaded] = React.useState(false);
@@ -56,12 +64,16 @@ function App() {
 		distanceWeight: 5,
 		weatherWeight: 5,
 		emissionWeight: 5,
+		currentPoint: { lat: 51.056070541830934, lng: -114.0765380859375 },
 		startPoint: { lat: 51.056070541830934, lng: -114.0765380859375 },
 		endPoint: { lat: 51.09619172351068, lng: -114.14039611816406 },
 	}
 
 
 	const [filters, setFilters] = React.useState(intialFilters);
+	const lastFilters = React.useRef(filters); // Ref to store the latest count value
+	const [disableAnnimateBtn, setDisableAnnimateBtn] = React.useState(true);
+
 	const [loading, setLoading] = React.useState(false);
 
 	const snackBar = {
@@ -107,11 +119,52 @@ function App() {
 		setRoutes([])
 	}
 
+	const startAnnimationTimer = () => {
+		const myTimeout = setInterval(() => {
+			showRouteAnnimation()
+			setFilters((filters) => {
+				if (filters.currentPoint == filters.endPoint) {
+					clearTimeout(myTimeout);
+				}
+
+				return filters
+			});
+
+
+		}, 1000);
+
+	}
+
+	const showRouteAnnimation = () => {
+		let newRoutes = []
+		let r = routes
+		//reset()
+		r.map((points) => {
+			points.splice(0, 50)
+
+			if (points.length > 0) {
+				newRoutes.push(points)
+			}
+
+		})
+		setRoutes(newRoutes)
+		setFilters({
+			...filters,
+			currentPoint: newRoutes[0] !== undefined ? newRoutes[0][0] : filters.endPoint,
+		})
+
+	}
+
 	const getRoute = () => {
 		setLoading(true);
 		setTimeout(() => {
 			setLoading(false)
-		}, 10000);
+		}, 20000);
+
+		setFilters({
+			...filters,
+			currentPoint: filters.startPoint
+		})
 
 		dataProvider.getList('route-recommendation/getRoute', {
 			pagination: { page: 0, perPage: 0 },
@@ -139,6 +192,8 @@ function App() {
 
 					})
 					setRoutes([points])
+					setDisableAnnimateBtn(false)
+
 
 				}
 
@@ -153,7 +208,6 @@ function App() {
 		// 	setLoading(false)
 		// }, 200);
 	}
-
 
 	const startMarkerRef = React.useRef(null)
 	const handleDragStartMarker = () => {
@@ -184,6 +238,20 @@ function App() {
 	}
 
 
+	const getCurrentPosition = () => {
+		if (navigator?.geolocation) {
+			navigator.geolocation.getCurrentPosition((location) => {
+				if (location) {
+					setFilters({
+						...filters,
+						startPoint: { lat: location.coords.latitude, lng: location.coords.longitude },
+					})
+				}
+			});
+		}
+	}
+
+
 	React.useEffect(() => {
 		reset()
 		return () => {
@@ -194,7 +262,7 @@ function App() {
 
 	return (
 		<React.Fragment>
-			<div style={{height: '100%'}}>
+			<div style={{ height: '100%' }}>
 
 				<div style={{ display: 'flex' }}>
 					<h1>Route Recommendation System:
@@ -254,7 +322,7 @@ function App() {
 							</Grid>
 
 
-							<Grid item xs={12} md={4}>
+							<Grid item xs={12} md={4} style={{ display: 'flex' }}>
 								<TextField
 									id="filled-multiline-static"
 									disabled={true}
@@ -272,6 +340,13 @@ function App() {
 									style={{ width: '100%' }}
 									variant="filled"
 								/>
+								<IconButton
+									aria-label="location"
+									onClick={() => getCurrentPosition()}
+									color="primary"
+								>
+									<GpsFixedIcon />
+								</IconButton>
 							</Grid>
 							<Grid item xs={12} md={4}>
 								<TextField
@@ -292,9 +367,22 @@ function App() {
 								/>
 							</Grid>
 							<Grid item xs={12} md={4}>
-								<LoadingButton loading={loading} variant="contained" style={{ marginTop: 15 }} onClick={() => getRoute()}>
+								<LoadingButton loading={loading} disabled={filters.startPoint == filters.endPoint} variant="contained" style={{ marginTop: 15 }} onClick={() => getRoute()}>
 									Find the route
 								</LoadingButton>
+
+								<Button
+									style={{ marginTop: 15, marginLeft: 15, height: 'fit-content', }}
+									variant="contained"
+									color="warning"
+									disabled={disableAnnimateBtn}
+									onClick={() => {
+										setDisableAnnimateBtn(true)
+										startAnnimationTimer()
+									}}
+								>
+									Show the route
+								</Button>
 
 
 							</Grid>
@@ -320,6 +408,7 @@ function App() {
 							<Polyline key={i} positions={points} color="Navy" weight={4} lineCap="square" />
 						))}
 					</Pane>
+
 					<Marker
 						icon={customStartIcon}
 						draggable={true}
@@ -332,6 +421,19 @@ function App() {
 							</span>
 						</Popup>
 					</Marker>
+					<Marker
+						icon={movingIcon}
+						draggable={false}
+						position={filters.currentPoint}
+
+					>
+						<Popup minWidth={90}>
+							<span >
+								Our Location
+							</span>
+						</Popup>
+					</Marker>
+
 					<Marker
 						icon={customEndIcon}
 						draggable={true}
