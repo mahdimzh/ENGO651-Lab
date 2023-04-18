@@ -1,45 +1,26 @@
-# ENGO651 - Lab 6 Assignment
+# ENGO651 - Final Project
 ## Mahdi Mohammadizadeh (30175778)
 ## Hadi Aghazadeh (30181045)
 
-# Web mapping application to draw a polygone and edit it.
+# Route Recommendations App based on Extreme Weather and Gas Emissions
+This project is a web application that provides personalized route recommendations for truck drivers. It considers the user's subjective goals and factors in extreme weather and gas emissions to offer optimal route recommendations.
 
-## Overview 
-The objective of lab 6 assignment is to:
+# Why are Route Recommendations Important?
+Route recommendations are essential because they help us find the best route to reach our destination, personalized to our goals. Traditional route recommendations based on shortest distance or fastest time may not consider subjective criteria, leading to suboptimal choices. Therefore, a personalized approach to route recommendations takes into account the user's goals and considers factors such as weather and gas emissions to provide optimal recommendations.
 
-- Draw a polyline on the map by clicking and dragging.
+# Importance of Considering Extreme Weather
+Extreme weather conditions can significantly impact Canada's roadways and transportation system, causing travel disruptions, car accidents, and increased maintenance costs. As climate change increases the frequency and severity of such weather events, it is crucial to prepare accordingly to stay safe on the road.
 
-- Click the "Simplify" button to simplify the drawn polyline.
+# The Impact of Greenhouse Gas Emissions
+The transportation sector accounts for about a quarter of Canada's greenhouse gas emissions, with passenger vehicles contributing a significant amount. To reduce emissions, we need to encourage the use of low-emission vehicles and roads, invest in public transportation infrastructure and consider gas emissions in route recommendations.
 
-- Click the "Clear" button to remove the drawn polyline from the map and draw a new polyline.
+# AI-Powered Recommendations
+AI-powered route recommendations can analyze various data sources such as traffic and weather data and user preferences to provide optimal route recommendations. It can learn from each user's behavior and preferences, make personalized recommendations and adjust them in real-time based on changing conditions. It can also anticipate users' needs and suggest the best routes and modes of transportation based on their profile and past travel behavior.
 
-This project aims to provide an understanding of line simplification in web mapping applications by using Turf.js. Users will be able to draw a polyline on the map, and when they click on the "simplify button," a simplified version of the polyline will be displayed in a different color.
-
-
-## Technologies Used 
-
-- Django 
-
-- React 
-
-- MySQL 
-
-- Docker 
-
-- Git 
-
-- Leaflet.js
-
-- Turf.js
+# Web Application Features
+The web application for this project allows users to plan truck routes with three different options: distance, extreme weather, and gas emissions. Users rate each option based on their importance, and the AI model provides route recommendations based on the combination of these ratings. The results are presented in a visually intuitive manner that enables users to quickly and easily compare different routes and decide which one to choose.
 
 
-## Features
-
-- Users are able to draw an aribtrary polygones
-- A simplifed version of that polygone can be shown based on user preference
-- Users can edit the polygone, and simplified version will be updated accordingly
-- Users are able to draw multi polygones at the same time and their simplified version will be shown to them
-- Users can delete the polygone and the change will be apply online
 
 ## Components 
 
