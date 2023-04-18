@@ -112,6 +112,7 @@ Access the website at `http://localhost:5050` in your browser.
 
 Contributions are welcome! Feel free to open an issue or submit a pull request. 
 
+
 # License
 This code is licensed under the MIT License.
 
