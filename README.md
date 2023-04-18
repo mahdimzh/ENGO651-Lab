@@ -20,6 +20,15 @@ AI-powered route recommendations can analyze various data sources such as traffi
 # Web Application Features
 The web application for this project allows users to plan truck routes with three different options: distance, extreme weather, and gas emissions. Users rate each option based on their importance, and the AI model provides route recommendations based on the combination of these ratings. The results are presented in a visually intuitive manner that enables users to quickly and easily compare different routes and decide which one to choose.
 
+# Route Recommendation AI Engine feature
+
+The route recommendation engine presented here tackles the problem of finding optimal routes that satisfy multiple criteria. The engine takes into consideration three main criteria: distance, extreme weather, and gas emissions. The distance criterion is the typical criterion used in route finding, while the extreme weather and gas emissions criteria are represented by road slope and tree coverage, respectively.
+
+The road slope is used as a representation for extreme weather, where roads with steeper slopes are considered riskier for bad incidences in adverse weather conditions. This criterion is weighted based on user preference, where the weight of extreme weather is high when the user is more concerned about weather-related risks. The data for road slope is obtained from a private sector in Calgary.
+
+The gas emissions criterion is represented by the number of trees in each road. More trees in a road indicate lower gas emissions, and therefore, better for the environment. This criterion is also weighted based on user preference, where the weight of gas emissions is high when the user is more concerned about environmental impact. The data for tree coverage in Calgary is obtained from Calgary's open data and preprocessed into Calgary's road data.
+
+The route recommendation engine consists of two main parts: Shortest path and Weight Normalization. The Shortest path algorithm is based on Dijkstra's algorithm, which is readily available in the networkx library in Python. The Weight Normalization component combines the weights of the three criteria to generate a unique signal that is used as the weight of the Dijkstra algorithm. An AI-powered weight normalization class is used to compute the final weights based on the user's preferences. This dynamic weight calculation ensures that the final recommended route is optimized and unique, rather than a selection among three distinctive routes.
 
 
 ## Components 
@@ -99,7 +108,10 @@ Access the website at `http://localhost:5173` in your browser.
 Access the website at `http://localhost:5050` in your browser. 
 
 
-Contributions 
+# Contributions 
 
 Contributions are welcome! Feel free to open an issue or submit a pull request. 
+
+# License
+This code is licensed under the MIT License.
 
