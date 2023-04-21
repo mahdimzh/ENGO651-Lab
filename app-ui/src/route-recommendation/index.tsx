@@ -392,7 +392,8 @@ function App() {
 											...filters,
 											distanceWeight: newValue as number,
 										})
-										reset()
+										setRoute([])
+										// reset()
 									}
 									}
 								/>
@@ -405,7 +406,7 @@ function App() {
 											...filters,
 											weatherWeight: newValue as number,
 										})
-										reset()
+										setRoute([])
 									}
 
 									}
@@ -420,7 +421,7 @@ function App() {
 											...filters,
 											emissionWeight: newValue as number,
 										});
-										reset()
+										setRoute([])
 									}
 									}
 
