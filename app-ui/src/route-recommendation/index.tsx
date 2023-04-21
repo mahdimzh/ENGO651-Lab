@@ -174,6 +174,8 @@ function App() {
 		return radians * (180 / Math.PI);
 	}
 
+	const frequency = 1
+	const annimateFrequencyMs = 100
 
 	const showRouteAnnimation = () => {
 		// let newRoutes: ((prevState: never[]) => never[]) | { lat: number; lng: number; }[][] = []
@@ -194,7 +196,7 @@ function App() {
 		// setRoute(r)
 		setFilters({
 			...filters,
-			currentPointIndex: (filters.currentPointIndex + 5) >= route.length ? (route.length - 1) : filters.currentPointIndex + 5
+			currentPointIndex: (filters.currentPointIndex + frequency) >= route.length ? (route.length - 1) : filters.currentPointIndex + frequency
 			//currentPoint: r.length > 0 ? r[0] : filters.endPoint,
 		})
 
@@ -345,7 +347,7 @@ function App() {
 		} else if (annimationMode && (route.length - 1) > filters.currentPointIndex) {
 			setTimeout(() => {
 				showRouteAnnimation()
-			}, 1000);
+			}, annimateFrequencyMs);
 		}
 
 
