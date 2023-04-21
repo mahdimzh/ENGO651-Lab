@@ -325,10 +325,10 @@ function App() {
 
 			setTimeout(() => {
 				getRoute()
-			}, 2000);
+			}, 5000);
 		} else if(annimationMode === false && reroute === false && filters.currentPointIndex != 0 && filters.currentPointIndex != (route.length - 1)) {
 			if(route[filters.currentPointIndex] !== undefined) {
-				const newStartPoint = generateRandomPointWithDistance(route[filters.currentPointIndex][0][0], route[filters.currentPointIndex][0][1], 1);
+				const newStartPoint = generateRandomPointWithDistance(route[filters.currentPointIndex][0][0], route[filters.currentPointIndex][0][1], 1.5);
 				if(newStartPoint !== undefined) {
 					setFilters({
 						...filters,
@@ -557,7 +557,10 @@ function App() {
 						draggable={true}
 						eventHandlers={{ drag: handleDragEndMarker }}
 						position={filters.endPoint}
-						ref={endMarkerRef}>
+						ref={endMarkerRef}
+						zIndexOffset={0}
+						>
+							
 						<Popup minWidth={90}>
 							<span >
 								End Point
