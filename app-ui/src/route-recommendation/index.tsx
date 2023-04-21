@@ -200,13 +200,12 @@ function App() {
 
 	}
 
-	const getRoute = (startPoint: { lat: any; lng: any; }, endPoint: { lat: any; lng: any; }, autoStartAnnimate = false) => {
+	const getRoute = () => {
 		reset()
 		setLoading(true);
 		setTimeout(() => {
 			setLoading(false)
-		}, 20000);
-
+		}, 1000);
 
 		dataProvider.getList('route-recommendation/getRoute', {
 			pagination: { page: 0, perPage: 0 },
@@ -215,10 +214,10 @@ function App() {
 				distanceWeight: filters.distanceWeight,
 				weatherWeight: filters.weatherWeight,
 				emissionWeight: filters.emissionWeight,
-				// startPoint: [filters.startPoint.lat, filters.startPoint.lng],
-				// endPoint: [filters.endPoint.lat, filters.endPoint.lng],
-				startPoint: [startPoint.lat, startPoint.lng],
-				endPoint: [endPoint.lat, endPoint.lng],
+				startPoint: [filters.startPoint.lat, filters.startPoint.lng],
+				endPoint: [filters.endPoint.lat, filters.endPoint.lng],
+				// startPoint: [startPoint.lat, startPoint.lng],
+				// endPoint: [endPoint.lat, endPoint.lng],
 			},
 		})
 			.then((res) => {
@@ -321,15 +320,20 @@ function App() {
 
 		// console.log(annimationMode, route)
 		
+		if (filters.currentPointIndex === -1) {
+			handleOpenSnackBar('Location is not on the route. re-routing again...', 'warning')
 
-		if(annimationMode === false && reroute === false && filters.currentPointIndex != 0 && filters.currentPointIndex != (route.length - 1)) {
+			setTimeout(() => {
+				getRoute()
+			}, 2000);
+		} else if(annimationMode === false && reroute === false && filters.currentPointIndex != 0 && filters.currentPointIndex != (route.length - 1)) {
 			if(route[filters.currentPointIndex] !== undefined) {
 				const newStartPoint = generateRandomPointWithDistance(route[filters.currentPointIndex][0][0], route[filters.currentPointIndex][0][1], 1);
 				if(newStartPoint !== undefined) {
 					setFilters({
 						...filters,
 						startPoint: { lat: newStartPoint.lat, lng: newStartPoint.lon },
-						// currentPointIndex: 0,
+						 currentPointIndex: -1,
 					})	
 				}	
 			}
@@ -469,7 +473,8 @@ function App() {
 								/>
 							</Grid>
 							<Grid item xs={12} md={4}>
-								<LoadingButton loading={loading} disabled={filters.startPoint == filters.endPoint} variant="contained" style={{ marginTop: 15 }} onClick={() => getRoute(filters.startPoint, filters.endPoint)}>
+								<LoadingButton loading={loading} disabled={filters.startPoint == filters.endPoint} variant="contained" style={{ marginTop: 15 }} 
+								onClick={() => getRoute()}>
 									Find the route
 								</LoadingButton>
 
