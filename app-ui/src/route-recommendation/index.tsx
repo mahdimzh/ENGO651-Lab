@@ -19,7 +19,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
-import L from "leaflet";
+import L, { point } from "leaflet";
 import IconButton from '@mui/material/IconButton';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import Button from '@mui/material/Button';
@@ -58,21 +58,27 @@ const movingIcon = new L.Icon({
 
 function App() {
 	const dataProvider = useDataProvider();
-	const [graphLoaded, setGraphLoaded] = React.useState(false);
-	const [routes, setRoutes] = React.useState([]);
+	// const [graphLoaded, setGraphLoaded] = React.useState(false);
+	//const [routes, setRoutes] = React.useState([]);
+	const [route, setRoute] = React.useState([]);
+
 	const intialFilters = {
+		// randomReRoute: false,
 		distanceWeight: 5,
 		weatherWeight: 5,
 		emissionWeight: 5,
-		currentPoint: { lat: 51.056070541830934, lng: -114.0765380859375 },
+		currentPointIndex: 0,
+		// currentPoint: { lat: 51.056070541830934, lng: -114.0765380859375 },
 		startPoint: { lat: 51.056070541830934, lng: -114.0765380859375 },
 		endPoint: { lat: 51.09619172351068, lng: -114.14039611816406 },
 	}
 
 
 	const [filters, setFilters] = React.useState(intialFilters);
-	const lastFilters = React.useRef(filters); // Ref to store the latest count value
+	// const lastFilters = React.useRef(filters); // Ref to store the latest count value
 	const [disableAnnimateBtn, setDisableAnnimateBtn] = React.useState(true);
+	const [annimationMode, setAnnimationMode] = React.useState(false);
+	const [reroute, setReroute] = React.useState(true);
 
 	const [loading, setLoading] = React.useState(false);
 
@@ -101,7 +107,7 @@ function App() {
 		setOpenSnackBar(snackBar);
 	};
 
-	const loadGraph = () => {
+	/*const loadGraph = () => {
 		dataProvider.getList('route-recommendation/loadGraph', {
 			pagination: { page: 0, perPage: 0 },
 			sort: { field: '', order: '' },
@@ -113,58 +119,94 @@ function App() {
 		// setTimeout(() => {
 		// 	setLoading(false)
 		// }, 200);
-	}
+	}*/
 
 	const reset = () => {
-		setRoutes([])
+		setRoute([])
+		//setRoutes([])
+		setFilters({
+			...filters,
+			currentPointIndex: 0
+		})
+
 	}
 
 	const startAnnimationTimer = () => {
-		const myTimeout = setInterval(() => {
-			showRouteAnnimation()
-			setFilters((filters) => {
-				if (filters.currentPoint == filters.endPoint) {
-					clearTimeout(myTimeout);
-				}
+		// const numberOfPoints = route.length
 
-				return filters
-			});
-
-
-		}, 1000);
-
+		setAnnimationMode(true)
+		showRouteAnnimation()
 	}
+
+	function generateRandomPointWithDistance(lat: any, lon: any, distanceKm: number) {
+		// Radius of the Earth in kilometers
+		const earthRadiusKm = 6371;
+
+		// Convert latitude and longitude to radians
+		const latRad = degToRad(lat);
+		const lonRad = degToRad(lon);
+
+		// Convert distance from kilometers to radians
+		const distanceRad = distanceKm / earthRadiusKm;
+
+		// Generate a random bearing in radians (0 to 2*pi)
+		const bearingRad = Math.random() * (2 * Math.PI);
+
+		// Calculate the new latitude and longitude
+		const newLatRad = Math.asin(Math.sin(latRad) * Math.cos(distanceRad) + Math.cos(latRad) * Math.sin(distanceRad) * Math.cos(bearingRad));
+		const newLonRad = lonRad + Math.atan2(Math.sin(bearingRad) * Math.sin(distanceRad) * Math.cos(latRad), Math.cos(distanceRad) - Math.sin(latRad) * Math.sin(newLatRad));
+
+		// Convert new latitude and longitude back to degrees
+		const newLat = radToDeg(newLatRad);
+		const newLon = radToDeg(newLonRad);
+
+		// Return the new latitude and longitude as an object
+		return { lat: newLat, lon: newLon };
+	}
+
+	// Helper function to convert degrees to radians
+	function degToRad(degrees: number) {
+		return degrees * (Math.PI / 180);
+	}
+
+	// Helper function to convert radians to degrees
+	function radToDeg(radians: number) {
+		return radians * (180 / Math.PI);
+	}
+
 
 	const showRouteAnnimation = () => {
-		let newRoutes = []
-		let r = routes
+		// let newRoutes: ((prevState: never[]) => never[]) | { lat: number; lng: number; }[][] = []
+		// console.log(route)
+		// let r = route
+		// r.splice(0, 5)
+
 		//reset()
-		r.map((points) => {
-			points.splice(0, 50)
 
-			if (points.length > 0) {
-				newRoutes.push(points)
-			}
+		// r.map((points) => {
+		// 	points.splice(0, 50)
 
-		})
-		setRoutes(newRoutes)
+		// 	if (points.length > 0) {
+		// 		newRoutes.push(points)
+		// 	}
+
+		// })
+		// setRoute(r)
 		setFilters({
 			...filters,
-			currentPoint: newRoutes[0] !== undefined ? newRoutes[0][0] : filters.endPoint,
+			currentPointIndex: (filters.currentPointIndex + 5) >= route.length ? (route.length - 1) : filters.currentPointIndex + 5
+			//currentPoint: r.length > 0 ? r[0] : filters.endPoint,
 		})
 
 	}
 
-	const getRoute = () => {
+	const getRoute = (startPoint: { lat: any; lng: any; }, endPoint: { lat: any; lng: any; }, autoStartAnnimate = false) => {
+		reset()
 		setLoading(true);
 		setTimeout(() => {
 			setLoading(false)
 		}, 20000);
 
-		setFilters({
-			...filters,
-			currentPoint: filters.startPoint
-		})
 
 		dataProvider.getList('route-recommendation/getRoute', {
 			pagination: { page: 0, perPage: 0 },
@@ -173,26 +215,39 @@ function App() {
 				distanceWeight: filters.distanceWeight,
 				weatherWeight: filters.weatherWeight,
 				emissionWeight: filters.emissionWeight,
-				startPoint: [filters.startPoint.lat, filters.startPoint.lng],
-				endPoint: [filters.endPoint.lat, filters.endPoint.lng],
+				// startPoint: [filters.startPoint.lat, filters.startPoint.lng],
+				// endPoint: [filters.endPoint.lat, filters.endPoint.lng],
+				startPoint: [startPoint.lat, startPoint.lng],
+				endPoint: [endPoint.lat, endPoint.lng],
 			},
 		})
 			.then((res) => {
 
-				setGraphLoaded(true)
+				// setGraphLoaded(true)
 				if (res.data[0] !== undefined) {
 					const edges = res.data[0].edges
-					let points = []
-					edges.map((edge) => {
+					let points = edges.map((edge: { points: any; }) => {
 						// edge.points.map((edge) => {
 						// 	points.push([edge[1], edge[0]])
 
 						// })
-						points.push(...edge.points)
+						return edge.points
 
 					})
-					setRoutes([points])
+					// setRoutes([points])
+					setRoute(points)
 					setDisableAnnimateBtn(false)
+
+					setFilters({
+						...filters,
+						currentPointIndex: 0
+					})
+
+					// if (autoStartAnnimate) {
+					// 	setTimeout(() => {
+					// 		startAnnimationTimer()
+					// 	}, 1500);
+					// }
 
 
 				}
@@ -217,7 +272,7 @@ function App() {
 			setFilters({
 				...filters,
 				startPoint: marker.getLatLng(),
-				currentPoint: marker.getLatLng(),
+				currentPointIndex: 0,
 			})
 
 		}
@@ -251,6 +306,52 @@ function App() {
 			});
 		}
 	}
+
+
+
+	React.useEffect(() => {
+		// if(filters.randomReRoute) {
+		// 	setFilters({
+		// 		...filters,
+		// 		randomReRoute: false
+		// 	})
+		// 	getRoute(filters.startPoint, filters.endPoint, true)
+
+		// }
+
+		// console.log(annimationMode, route)
+		
+
+		if(annimationMode === false && reroute === false && filters.currentPointIndex != 0 && filters.currentPointIndex != (route.length - 1)) {
+			if(route[filters.currentPointIndex] !== undefined) {
+				const newStartPoint = generateRandomPointWithDistance(route[filters.currentPointIndex][0][0], route[filters.currentPointIndex][0][1], 1);
+				if(newStartPoint !== undefined) {
+					setFilters({
+						...filters,
+						startPoint: { lat: newStartPoint.lat, lng: newStartPoint.lon },
+						// currentPointIndex: 0,
+					})	
+				}	
+			}
+		} else if ((route.length - 1) === filters.currentPointIndex) {
+			setAnnimationMode(false)
+		} else if (reroute === true && filters.currentPointIndex > route.length / 2) {
+			setAnnimationMode(false)
+			setReroute(false)
+		} else if (annimationMode && (route.length - 1) > filters.currentPointIndex) {
+			setTimeout(() => {
+				showRouteAnnimation()
+			}, 1000);
+		}
+
+
+	}, [annimationMode, filters.currentPointIndex]);
+
+	React.useEffect(() => {
+		if(reroute === false) {
+
+		}
+	}, [reroute]);
 
 
 	React.useEffect(() => {
@@ -368,7 +469,7 @@ function App() {
 								/>
 							</Grid>
 							<Grid item xs={12} md={4}>
-								<LoadingButton loading={loading} disabled={filters.startPoint == filters.endPoint} variant="contained" style={{ marginTop: 15 }} onClick={() => getRoute()}>
+								<LoadingButton loading={loading} disabled={filters.startPoint == filters.endPoint} variant="contained" style={{ marginTop: 15 }} onClick={() => getRoute(filters.startPoint, filters.endPoint)}>
 									Find the route
 								</LoadingButton>
 
@@ -376,7 +477,8 @@ function App() {
 									style={{ marginTop: 15, marginLeft: 15, height: 'fit-content', }}
 									variant="contained"
 									color="warning"
-									disabled={disableAnnimateBtn}
+									// disabled={disableAnnimateBtn || routes[0] === undefined || routes[0].length === 0}
+									disabled={disableAnnimateBtn || route.length === 0}
 									onClick={() => {
 										setDisableAnnimateBtn(true)
 										startAnnimationTimer()
@@ -404,27 +506,21 @@ function App() {
 						attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 						url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 					/>
-					<Pane>
-						{routes.map((points, i) => (
-							<Polyline key={i} positions={points} color="Navy" weight={4} lineCap="square" />
-						))}
-					</Pane>
-					<Marker
-						icon={movingIcon}
-						draggable={false}
-						position={filters.currentPoint}
-
+					<Pane
+						name="route"
 					>
-						<Popup minWidth={90}>
-							<span >
-								Our Location
-							</span>
-						</Popup>
-					</Marker>
+						{/*routes.map((points, i) => (
+							<Polyline key={i} positions={points} color="Navy" weight={4} lineCap="square" />
+						))*/}
+						{
+							<Polyline positions={route} color="Navy" weight={4} lineCap="square" />
 
+						}
+					</Pane>
 					<Marker
 						icon={customStartIcon}
 						draggable={true}
+						zIndexOffset={1}
 						eventHandlers={{ drag: handleDragStartMarker }}
 						position={filters.startPoint}
 						ref={startMarkerRef}>
@@ -434,6 +530,21 @@ function App() {
 							</span>
 						</Popup>
 					</Marker>
+					<Marker
+						icon={movingIcon}
+						draggable={false}
+						zIndexOffset={0}
+						position={(route[filters.currentPointIndex] !== undefined && route[filters.currentPointIndex][0] !== undefined) ? { lat: route[filters.currentPointIndex][0][0], lng: route[filters.currentPointIndex][0][1] } : filters.startPoint}
+
+					>
+						<Popup minWidth={90}>
+							<span >
+								Our Location
+							</span>
+						</Popup>
+					</Marker>
+
+
 
 					<Marker
 						icon={customEndIcon}
