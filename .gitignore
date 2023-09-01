@@ -6,3 +6,4 @@ app-ui/public/config.js
 nohup.out
 .vscode/
 app/route_recommendation/data/
+app/media/

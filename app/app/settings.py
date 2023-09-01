@@ -50,13 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
 
-     # my apps
+    # my apps
     # 'users.apps.UsersConfig',
     'books.apps.BooksConfig',
     'book_reviews.apps.BookReviewsConfig',
     'building_permit.apps.BuildingPermitConfig',
+    'pavement_crack.apps.PavementCrackConfig',
     'route_recommendation.apps.RouteRecommendationConfig',
-    
+
     'rest_framework',
     'core',
     'core.user',
@@ -84,20 +85,18 @@ MIDDLEWARE = [
 
 # CORS_ALLOW_ALL_ORIGINS=True
 CORS_ORIGIN_ALLOW_ALL = True
-ALLOWED_HOSTS=['*']
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_METHODS = ['*']
 
 
-
-
 MIDDLEWARE_CLASSES = [
- 
+
 ]
 
 ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
-    { 
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
@@ -130,8 +129,8 @@ DATABASES = {
         'NAME': 'library',
         'USER': 'library',
         'PASSWORD': 'library@passowrd',
-        'HOST':'localhost',
-        'PORT':'6033',
+        'HOST': 'localhost',
+        'PORT': '6033',
     }
 }
 
@@ -177,7 +176,7 @@ USE_TZ = True
 
 # STATIC_URL = '/static/'
 # STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "staticfiles"), 
+#     os.path.join(BASE_DIR, "staticfiles"),
 # ]
 
 # Default primary key field type
@@ -186,3 +185,7 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOGIN_REDIRECT_URL = 'home'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

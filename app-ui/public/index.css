@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+}
+
+.sr-only {
+  display: none;
+}
+
+
+.react-split__sash {
+  background: #0e0909;
+  opacity: 0.2;
+}
