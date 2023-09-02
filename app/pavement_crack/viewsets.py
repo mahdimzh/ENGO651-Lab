@@ -163,10 +163,10 @@ class PavementCrackViewSet(viewsets.ModelViewSet):
                 })
 
             # Query3
-            query = "SELECT DATE_FORMAT(timestamp, '%Y-%m-%d'), COUNT(*) FROM pavement_crack_pavementcrack "
+            query = "SELECT DATE_FORMAT(timestamp, '%%Y-%%m-%%d'), COUNT(*) FROM pavement_crack_pavementcrack "
             if conditions:
                 query += " WHERE " + " AND ".join(conditions)
-            query += " GROUP BY DATE_FORMAT(timestamp, '%Y-%m-%d')"
+            query += " GROUP BY DATE_FORMAT(timestamp, '%%Y-%%m-%%d')"
 
             if parameters:
                 cursor.execute(query, parameters)

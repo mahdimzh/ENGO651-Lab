@@ -43,9 +43,10 @@ import {
 	Title,
 	Tooltip,
 	Legend,
-	Colors
+	Colors,
+	ArcElement
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import ListItemText from '@mui/material/ListItemText';
@@ -56,7 +57,8 @@ import { setInterval } from "timers/promises";
 import { Icon } from '@mui/material';
 import TaskIcon from '@mui/icons-material/Task';
 import { useGlobal } from "../App";
-
+import BarChartIcon from '@mui/icons-material/BarChart';
+import PieChartIcon from '@mui/icons-material/PieChart';
 
 ChartJS.register(
 	CategoryScale,
@@ -65,8 +67,10 @@ ChartJS.register(
 	Title,
 	Tooltip,
 	Legend,
-	Colors
+	Colors,
+	ArcElement
 );
+
 
 
 const customIcon = new L.Icon({
@@ -108,6 +112,15 @@ function App() {
 	const [report, setReport] = React.useState(initialReport);
 
 
+	const initialChartType = {
+		requestStatusChart: 'BAR',
+		repairTypeChart: 'BAR',
+		requestPerDayChart: 'BAR',
+	}
+
+	const [chartTye, setChartType] = React.useState(initialChartType);
+
+
 	const [openFilters, setOpenFilters] = React.useState(false);
 	const [loading, setLoading] = React.useState(false);
 
@@ -129,7 +142,7 @@ function App() {
 	}, [openFilters]);
 
 
-	const statusOptions = {
+	const [statusOptions, setStatusOptions] = React.useState({
 		indexAxis: 'y' as const,
 		elements: {
 			bar: {
@@ -149,10 +162,11 @@ function App() {
 		},
 		maintainAspectRatio: false, // Allow the chart to adjust its aspect ratio
 
-	};
+	});
+
 
 	const statusLabels = ['Not started', 'Inspected', 'In Progress', 'Fixed'];
-	const statusData = {
+	const [statusData, setStatusData] = React.useState({
 		labels: statusLabels,
 		datasets: [{
 			label: '',
@@ -182,7 +196,7 @@ function App() {
 			],
 			borderWidth: 1
 		}]
-	};
+	});
 
 
 	const repairTypeOptions = {
@@ -340,6 +354,26 @@ function App() {
 	}, []);
 
 
+	React.useEffect(() => {
+		const datasetsData = {
+			...statusData.datasets[0],
+			data: [
+				report.group_by_status.filter((type) => type.status == 0).map((type) => type.count)[0],
+				report.group_by_status.filter((type) => type.status == 1).map((type) => type.count)[0],
+				report.group_by_status.filter((type) => type.status == 2).map((type) => type.count)[0],
+				report.group_by_status.filter((type) => type.status == 3).map((type) => type.count)[0],
+			]
+		}
+		setStatusData({
+			...statusData,
+			datasets: [datasetsData]
+		})
+		
+	}, [report]);
+
+
+	console.log(statusData)
+	
 	React.useEffect(() => {
 		// const mapContainer = document.getElementsByClassName('my-map-container')[0]
 		// if (mapContainer) {
@@ -516,12 +550,52 @@ function App() {
 						<div style={{ ...layoutCSS, background: 'white' }}>
 							<Grid container spacing={2} style={{ display: 'block', height: '100%' }}>
 								<Grid item style={{ height: '50%', paddingTop: 0 }}>
-									<Item><Bar options={statusOptions} data={statusData} /></Item>
-
-
+									{
+										chartTye.requestStatusChart == 'BAR' &&
+										<IconButton aria-label="menu" className="menu-button" onClick={() => setChartType({ ...chartTye, requestStatusChart: 'PIE' })}>
+											<PieChartIcon />
+										</IconButton>
+									}
+									{
+										chartTye.requestStatusChart == 'PIE' &&
+										<IconButton aria-label="menu" className="menu-button" onClick={() => setChartType({ ...chartTye, requestStatusChart: 'BAR' })}>
+											<BarChartIcon />
+										</IconButton>
+									}
+									<Item style={{ height: 'calc(100% - 30px)' }}>
+										{
+											chartTye.requestStatusChart == 'BAR' &&
+											<Bar options={statusOptions} data={statusData} />
+										}
+										{
+											chartTye.requestStatusChart == 'PIE' &&
+											<Pie options={statusOptions} data={statusData} />
+										}
+									</Item>
 								</Grid>
 								<Grid item style={{ height: '50%' }}>
-									<Item><Bar options={repairTypeOptions} data={repairTypeData} /></Item>
+									{
+										chartTye.repairTypeChart == 'BAR' &&
+										<IconButton aria-label="menu" className="menu-button" onClick={() => setChartType({ ...chartTye, repairTypeChart: 'PIE' })}>
+											<PieChartIcon />
+										</IconButton>
+									}
+									{
+										chartTye.repairTypeChart == 'PIE' &&
+										<IconButton aria-label="menu" className="menu-button" onClick={() => setChartType({ ...chartTye, repairTypeChart: 'BAR' })}>
+											<BarChartIcon />
+										</IconButton>
+									}
+									<Item style={{ height: 'calc(100% - 30px)' }}>
+										{
+											chartTye.repairTypeChart == 'BAR' &&
+											<Bar options={repairTypeOptions} data={repairTypeData} />
+										}
+										{
+											chartTye.repairTypeChart == 'PIE' &&
+											<Pie options={repairTypeOptions} data={repairTypeData} />
+										}
+									</Item>
 								</Grid>
 							</Grid>
 						</div>
