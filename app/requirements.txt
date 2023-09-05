@@ -13,3 +13,5 @@ osmnx
 numpy
 scikit-learn
 shapely
+pyomo
+geopandas

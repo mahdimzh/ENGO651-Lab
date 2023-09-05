@@ -1,5 +1,5 @@
 import React from "react";
-import L, { MarkerCluster } from "leaflet";
+import L, { MarkerCluster, point } from "leaflet";
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
@@ -34,6 +34,9 @@ import {
 import SplitPane, { Pane } from 'split-pane-react';
 import 'split-pane-react/esm/themes/default.css'
 import Grid from '@mui/material/Grid';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 import {
 	Chart as ChartJS,
@@ -59,6 +62,15 @@ import TaskIcon from '@mui/icons-material/Task';
 import { useGlobal } from "../App";
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PieChartIcon from '@mui/icons-material/PieChart';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import LowPriorityIcon from '@mui/icons-material/LowPriority';
 
 ChartJS.register(
 	CategoryScale,
@@ -71,6 +83,26 @@ ChartJS.register(
 	ArcElement
 );
 
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+	[`&.${tableCellClasses.head}`]: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: 14,
+	},
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+	'&:nth-of-type(odd)': {
+		backgroundColor: theme.palette.action.hover,
+	},
+	// hide last border
+	'&:last-child td, &:last-child th': {
+		border: 0,
+	},
+}));
 
 
 const customIcon = new L.Icon({
@@ -95,9 +127,42 @@ const Item = styled(Paper)(({ theme }) => ({
 	height: '100%',
 }));
 
+function CustomTabPanel(props) {
+	const { children, value, index, ...other } = props;
+
+	return (
+		<div
+			role="tabpanel"
+			hidden={value !== index}
+			id={`simple-tabpanel-${index}`}
+			aria-labelledby={`simple-tab-${index}`}
+			{...other}
+		>
+			{value === index && (
+				<Box sx={{ p: 3 }}>
+					<Typography>{children}</Typography>
+				</Box>
+			)}
+		</div>
+	);
+}
+
+function a11yProps(index) {
+	return {
+		id: `simple-tab-${index}`,
+		'aria-controls': `simple-tabpanel-${index}`,
+	};
+}
+
 function App() {
 	const dataProvider = useDataProvider();
 	const { flag, setFlag } = useGlobal();
+
+	const [value, setValue] = React.useState(0);
+
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
 
 	const initialReport = {
 		group_by_status: [],
@@ -108,6 +173,7 @@ function App() {
 
 	const [resizing, setResizing] = React.useState(true);
 
+	const [planning, setPlanning] = React.useState({});
 	const [points, setPoints] = React.useState([]);
 	const [report, setReport] = React.useState(initialReport);
 
@@ -131,6 +197,9 @@ function App() {
 		d10: null,
 		d20: null,
 		d40: null,
+		budget: 50000,
+		pavement_cost: [1000, 1500, 1800, 2200],
+		points_payevemnt: [],
 	}
 
 
@@ -307,6 +376,26 @@ function App() {
 
 	}
 
+	const get_planning = () => {
+		return dataProvider.getList('pavement-cracks/get_planning', {
+			pagination: { page: 0, perPage: 0 },
+			sort: { field: '', order: '' },
+			filter: {
+				...filters,
+				points_payevemnt: points.map((point) => [point.latitude, point.longitude])
+			},
+		}).then((res) => {
+			if (res.data && Array.isArray(res.data) && res.data.length == 1) {
+				setPlanning(res.data[0])
+			}
+
+
+			setOpenFilters(false)
+			setLoading(false)
+		})
+
+	}
+
 	const transformComponentRef = React.useRef<ReactZoomPanPinchRef | null>(null);
 
 	const zoomToImage = () => {
@@ -368,12 +457,17 @@ function App() {
 			...statusData,
 			datasets: [datasetsData]
 		})
-		
+
 	}, [report]);
 
 
-	console.log(statusData)
-	
+
+	React.useEffect(() => {
+		get_planning()
+
+	}, [points]);
+
+
 	React.useEffect(() => {
 		// const mapContainer = document.getElementsByClassName('my-map-container')[0]
 		// if (mapContainer) {
@@ -434,7 +528,6 @@ function App() {
 	React.useEffect(() => {
 		setFlag(openFilters)
 	}, [openFilters]);
-
 
 
 	return (
@@ -645,37 +738,45 @@ function App() {
 														<Marker
 															icon={customIcon}
 															key={index}
-															position={[point.lat, point.long]}
+															position={[point.latitude, point.longitude]}
 															title={''}
 														>
 															<Popup>
 																<List>
-																	<img
-																		src={`${apiUrl}/media/pavement${point.image}`}
-																		style={{ width: '100%' }}
-																		srcSet={`${point.image}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-																		alt={point.image}
-																		loading="lazy"
-																	/>
+																	{/*src={`${apiUrl}/media/pavement${point.image}`}*/}
 
+																	{
+																		point.processed_image &&
+																		<img
+																			src={`data:image/png;base64, ${point.processed_image}`}
+																			style={{ width: '100%' }}
+																			srcSet={`${point.image}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+																			alt={point.time}
+																			loading="lazy"
+																		/>
+																	}
 																	<ListItem style={{ paddingLeft: 0 }}>
-																		<b>Latitude: </b> {point.lat}
+																		<b>Latitude: </b> {point.latitude}
 																	</ListItem>
 																	<ListItem >
-																		<b>Longitude: </b> {point.long}
+																		<b>Longitude: </b> {point.longitude}
 																	</ListItem>
 																	<ListItem style={{ overflowX: 'hidden' }} >
-																		<b>Longitudinal: </b> {point.d00}
+																		<b>Longitudinal: </b> {point.D00}
 																	</ListItem>
 																	<ListItem >
-																		<b>Lateral: </b> {point.d10}
+																		<b>Lateral: </b> {point.D10}
 																	</ListItem>
 																	<ListItem >
-																		<b>Alligator Crack: </b> {point.d20}
+																		<b>Alligator Crack: </b> {point.D20}
 																	</ListItem>
 																	<ListItem >
-																		<b>Other Corruption: </b> {point.d40}
+																		<b>Other Corruption: </b> {point.D40}
 																	</ListItem>
+																	<ListItem >
+																		<b>Severity: </b> {point.severity}
+																	</ListItem>
+
 																</List>
 															</Popup>
 														</Marker>
@@ -695,64 +796,135 @@ function App() {
 					</Pane>
 					<Pane minSize={150} maxSize='50%'>
 						<div style={{ ...layoutCSS, background: 'white', textAlign: 'center', display: 'block', width: '100%', height: '100%', }}>
-							<b>Total:</b>
 
-							<Box
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								height="100"
-							>
+							<CustomTabPanel value={value} index={0}>
+								<b>Total Point:</b>
+
+								<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+									<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+										<Tab label="Requests" {...a11yProps(0)} />
+										<Tab label="Planning" {...a11yProps(1)} />
+									</Tabs>
+								</Box>
 								<Box
-									textAlign="center"
 									display="flex"
 									alignItems="center"
+									justifyContent="center"
+									height="100"
 								>
-									<Icon component={TaskIcon} fontSize="large" />
-									<Typography variant="h3" style={{ marginLeft: '10px' }}>
-										{points.length}
-									</Typography>
+									<Box
+										textAlign="center"
+										display="flex"
+										alignItems="center"
+									>
+										<Icon component={TaskIcon} fontSize="large" />
+										<Typography variant="h3" style={{ marginLeft: '10px', }}>
+											{points.length}
+										</Typography>
+									</Box>
 								</Box>
-							</Box>
 
 
-							<Divider />
-							<List sx={{ height: '100%', bgcolor: 'background.paper', overflowY: 'auto' }}>
-								{
-									points.map((point, index) => {
+								<Divider />
+								<List sx={{ height: '100%', bgcolor: 'background.paper', overflowY: 'auto' }}>
+									{
+										points.map((point, index) => {
 
-										return (
-											<ListItem alignItems="flex-start" key={index}>
-												{/*
+											return (
+												<ListItem alignItems="flex-start" key={index}>
+													{/*
 											
 											<ListItemAvatar>
 												<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
 											</ListItemAvatar>
 											*/}
-												<ListItemText
-													primary={<b>{point.timestamp}</b>}
-													secondary={
-														<React.Fragment>
-															<Typography
-																sx={{ display: 'inline' }}
-																component="span"
-																variant="body2"
-																color="text.primary"
-															>
-																<b>Status:</b> {statusLabels[point.status]} <br />
-															</Typography>
-															{point.lat}, {point.long}
-														</React.Fragment>
-													}
-												/>
-											</ListItem>
+													<ListItemText
+														primary={<b>{point.time}</b>}
+														secondary={
+															<React.Fragment>
+																<Typography
+																	sx={{ display: 'inline' }}
+																	component="span"
+																	variant="body2"
+																	color="text.primary"
+																>
+																	<b>Severity:</b> {statusLabels[point.severity]} <br />
+																</Typography>
+																{point.latitude}, {point.longitude}
+															</React.Fragment>
+														}
+													/>
+												</ListItem>
 
-										)
+											)
 
-									})
-								}
-								<Divider variant="inset" component="li" />
-							</List>
+										})
+									}
+									<Divider variant="inset" component="li" />
+								</List>
+							</CustomTabPanel>
+							<CustomTabPanel value={value} index={1}>
+								<b>Total Cost:</b>
+
+								<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+									<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+										<Tab label="Requests" {...a11yProps(0)} />
+										<Tab label="Planning" {...a11yProps(1)} />
+									</Tabs>
+								</Box>
+								<Box
+									display="flex"
+									alignItems="center"
+									justifyContent="center"
+									height="100"
+								>
+									<Box
+										textAlign="center"
+										display="flex"
+										alignItems="center"
+									>
+										<Icon component={AttachMoneyIcon} fontSize="large" />
+										<Typography variant="h3" style={{ marginLeft: '10px' }}>
+											{planning.total_cost ? planning.total_cost : 0}
+										</Typography>
+									</Box>
+								</Box>
+								<Divider />
+								<TableContainer component={Paper}>
+									<Table sx={{ minWidth: 700 }} aria-label="customized table">
+										<TableHead>
+											<TableRow>
+												<StyledTableCell>Area</StyledTableCell>
+												<StyledTableCell align="center">Longitudinal</StyledTableCell>
+												<StyledTableCell align="center">Lateral</StyledTableCell>
+												<StyledTableCell align="center">Alligator Crack</StyledTableCell>
+												<StyledTableCell align="center">Other Corruption</StyledTableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											{
+												planning.pavement_type &&
+												Object.keys(planning.pavement_type).map((index, key) => {
+													const keys = planning.pavement_type[index]
+													return (
+														<StyledTableRow key={key}>
+															<StyledTableCell component="th" scope="row">
+																{index}
+															</StyledTableCell>
+															<StyledTableCell align="center">{keys.includes(0) == true ? <CheckIcon /> : <CloseIcon />}</StyledTableCell>
+															<StyledTableCell align="center">{keys.includes(1) == true ? <CheckIcon /> : <CloseIcon />}</StyledTableCell>
+															<StyledTableCell align="center">{keys.includes(2) == true ? <CheckIcon /> : <CloseIcon />}</StyledTableCell>
+															<StyledTableCell align="center">{keys.includes(3) == true ? <CheckIcon /> : <CloseIcon />}</StyledTableCell>
+														</StyledTableRow>
+													)
+												})
+											}
+										</TableBody>
+									</Table>
+								</TableContainer>
+
+							</CustomTabPanel>
+
 						</div>
 					</Pane>
 				</SplitPane>
