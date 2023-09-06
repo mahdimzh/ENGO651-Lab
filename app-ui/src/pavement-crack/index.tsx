@@ -37,6 +37,7 @@ import Grid from '@mui/material/Grid';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { Dialog, DialogContent } from '@mui/material';
 
 import {
 	Chart as ChartJS,
@@ -71,6 +72,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import LowPriorityIcon from '@mui/icons-material/LowPriority';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 ChartJS.register(
 	CategoryScale,
@@ -164,6 +169,20 @@ function App() {
 		setValue(newValue);
 	};
 
+	const [open, setOpen] = React.useState(false);
+	const [selectedImage, setSelectedImage] = React.useState(null);
+
+
+	const handleImageClick = (image) => {
+		setSelectedImage(image);
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setSelectedImage(null);
+		setOpen(false);
+	};
+
 	const initialReport = {
 		group_by_status: [],
 		group_by_repair_type: [],
@@ -234,6 +253,7 @@ function App() {
 	});
 
 
+	const servierityLabels = ['Low', 'Medium', 'High', ''];
 	const statusLabels = ['Not started', 'Inspected', 'In Progress', 'Fixed'];
 	const [statusData, setStatusData] = React.useState({
 		labels: statusLabels,
@@ -290,7 +310,8 @@ function App() {
 
 	};
 
-	const repairTypeLabels = ['type1', 'type2', 'type3', 'type4'];
+	const repairTypeLabels = ['Not Repaired', 'Pothole Repair', 'Crack Sealing', 'Resurfacing', 'Overlay', 'Full-depth Repair', 'Mill and Overlay', 'Infrared Repair', 'Patch Repair', 'Joint and Crack Repair', 'Edge Repair', 'Slurry Seal and Microsurfacing', 'Grinding']
+
 	const repairTypeData = {
 		labels: repairTypeLabels,
 		datasets: [{
@@ -300,6 +321,15 @@ function App() {
 				report.group_by_repair_type.filter((type) => type.repair_type == 1).map((type) => type.count)[0],
 				report.group_by_repair_type.filter((type) => type.repair_type == 2).map((type) => type.count)[0],
 				report.group_by_repair_type.filter((type) => type.repair_type == 3).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 4).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 5).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 6).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 7).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 8).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 9).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 10).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 11).map((type) => type.count)[0],
+				report.group_by_repair_type.filter((type) => type.repair_type == 12).map((type) => type.count)[0],
 			],
 			borderWidth: 1
 		}]
@@ -532,7 +562,25 @@ function App() {
 
 	return (
 		<React.Fragment>
+			<Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+				<DialogContent style={{ overflow: 'hidden', overflowX: 'hidden' }}>
+					<IconButton
+						edge="end"
+						color="inherit"
+						onClick={handleClose}
+						aria-label="close"
+						sx={{ position: 'absolute', top: 0, right: 0 }}
+					>
+						<CloseIcon />
+					</IconButton>
+					<img
+						src={`data:image/png;base64, ${selectedImage}`}
+						style={{ width: '100%' }}
+						loading="lazy"
 
+					/>
+				</DialogContent>
+			</Dialog>
 			<Drawer
 				anchor={'right'}
 				open={openFilters}
@@ -743,6 +791,7 @@ function App() {
 														>
 															<Popup>
 																<List>
+
 																	{/*src={`${apiUrl}/media/pavement${point.image}`}*/}
 
 																	{
@@ -753,29 +802,39 @@ function App() {
 																			srcSet={`${point.image}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
 																			alt={point.time}
 																			loading="lazy"
+																			onClick={() => handleImageClick(point.processed_image)}
+
 																		/>
 																	}
-																	<ListItem style={{ paddingLeft: 0 }}>
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
 																		<b>Latitude: </b> {point.latitude}
 																	</ListItem>
-																	<ListItem >
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
 																		<b>Longitude: </b> {point.longitude}
 																	</ListItem>
-																	<ListItem style={{ overflowX: 'hidden' }} >
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }} >
 																		<b>Longitudinal: </b> {point.D00}
 																	</ListItem>
-																	<ListItem >
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
 																		<b>Lateral: </b> {point.D10}
 																	</ListItem>
-																	<ListItem >
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
 																		<b>Alligator Crack: </b> {point.D20}
 																	</ListItem>
-																	<ListItem >
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
 																		<b>Other Corruption: </b> {point.D40}
 																	</ListItem>
-																	<ListItem >
-																		<b>Severity: </b> {point.severity}
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
+																		<b>Severity: </b> {servierityLabels[point.severity]}
 																	</ListItem>
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
+																		<b>Repair type: </b> {repairTypeLabels[point.repair_type]}
+																	</ListItem>
+
+																	<ListItem style={{ overflowX: 'hidden', paddingLeft: 0 }}>
+																		<b>Status: </b> {statusLabels[point.status]} 
+																	</ListItem>
+
 
 																</List>
 															</Popup>
@@ -796,16 +855,16 @@ function App() {
 					</Pane>
 					<Pane minSize={150} maxSize='50%'>
 						<div style={{ ...layoutCSS, background: 'white', textAlign: 'center', display: 'block', width: '100%', height: '100%', }}>
+							<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+								<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+									<Tab label="Requests" {...a11yProps(0)} />
+									<Tab label="Smart Planning" {...a11yProps(1)} />
+								</Tabs>
+							</Box>
 
 							<CustomTabPanel value={value} index={0}>
 								<b>Total Point:</b>
 
-								<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-									<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-										<Tab label="Requests" {...a11yProps(0)} />
-										<Tab label="Planning" {...a11yProps(1)} />
-									</Tabs>
-								</Box>
 								<Box
 									display="flex"
 									alignItems="center"
@@ -848,7 +907,7 @@ function App() {
 																	variant="body2"
 																	color="text.primary"
 																>
-																	<b>Severity:</b> {statusLabels[point.severity]} <br />
+																	<b>Status:</b> {statusLabels[point.status]} <br />
 																</Typography>
 																{point.latitude}, {point.longitude}
 															</React.Fragment>
@@ -863,21 +922,58 @@ function App() {
 									<Divider variant="inset" component="li" />
 								</List>
 							</CustomTabPanel>
-							<CustomTabPanel value={value} index={1}>
-								<b>Total Cost:</b>
+							<CustomTabPanel value={value} index={1} style={{height: '100%', paddingBottom: '50px', overflowY: 'auto' }}>
+								<Accordion>
+									<AccordionSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls="panel1a-content"
+										id="panel1a-header"
+									>
+										<Typography>Budget and Costs</Typography>
+									</AccordionSummary>
+									<AccordionDetails style={{ textAlign: 'left' }}>
+										<TextField value={filters.budget}
+											onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+												setFilters({ ...filters, budget: parseInt(event.target.value) })
+											}}
+											label="Budget" variant="standard" />
+										<TextField value={filters.pavement_cost[0]}
+											onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+												setFilters({ ...filters, pavement_cost: [parseInt(event.target.value), filters.pavement_cost[1], filters.pavement_cost[2], filters.pavement_cost[3]] })
+											}}
+											label="Longitudinal Cost" variant="standard" />
+										<TextField value={filters.pavement_cost[1]} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+											setFilters({ ...filters, pavement_cost: [filters.pavement_cost[0], parseInt(event.target.value), filters.pavement_cost[2], filters.pavement_cost[3]] })
+										}}
 
-								<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-									<Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-										<Tab label="Requests" {...a11yProps(0)} />
-										<Tab label="Planning" {...a11yProps(1)} />
-									</Tabs>
-								</Box>
+											label="Lateral Cost" variant="standard" />
+										<TextField value={filters.pavement_cost[2]} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+											setFilters({ ...filters, pavement_cost: [filters.pavement_cost[0], filters.pavement_cost[1], parseInt(event.target.value), filters.pavement_cost[3]] })
+										}}
+
+											label="Alligator Crack Cost" variant="standard" />
+										<TextField value={filters.pavement_cost[3]} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+											setFilters({ ...filters, pavement_cost: [filters.pavement_cost[0], filters.pavement_cost[1], filters.pavement_cost[2], parseInt(event.target.value)] })
+										}}
+
+											label="Other Corruption Cost" variant="standard" />
+									</AccordionDetails>
+
+									<Button variant="contained" onClick={() => {
+										get_planning()
+									}}
+									>Submit</Button>
+								</Accordion>
+
+
+
 								<Box
 									display="flex"
 									alignItems="center"
 									justifyContent="center"
 									height="100"
 								>
+									<b>Total Cost:</b>
 									<Box
 										textAlign="center"
 										display="flex"
@@ -890,11 +986,11 @@ function App() {
 									</Box>
 								</Box>
 								<Divider />
-								<TableContainer component={Paper}>
+								<TableContainer component={Paper} > 
 									<Table sx={{ minWidth: 700 }} aria-label="customized table">
 										<TableHead>
 											<TableRow>
-												<StyledTableCell>Area</StyledTableCell>
+												<StyledTableCell>Region</StyledTableCell>
 												<StyledTableCell align="center">Longitudinal</StyledTableCell>
 												<StyledTableCell align="center">Lateral</StyledTableCell>
 												<StyledTableCell align="center">Alligator Crack</StyledTableCell>

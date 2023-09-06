@@ -92,9 +92,9 @@ class PavementCrackViewSet(viewsets.ModelViewSet):
         #             'image': row[13],
         #         })
 
-        uri = 'https://deep-pave-0a514df89d9a.herokuapp.com/api/retrieve-data'
-        # uri = 'https://deep-pave-0a514df89d9a.herokuapp.com/api/retrieve-data-filter'
-        # uri += "?filter=" + json.dumps(filter)
+        # uri = 'https://deep-pave-0a514df89d9a.herokuapp.com/api/retrieve-data'
+        uri = 'https://deep-pave-0a514df89d9a.herokuapp.com/api/retrieve-data-filter'
+        uri += "?filter=" + json.dumps(filter)
 
         res = requests.get(uri)
 
@@ -116,25 +116,30 @@ class PavementCrackViewSet(viewsets.ModelViewSet):
         # serializer = self.serializer_class(queryset, many=True)
         # return Response(serializer.data)
 
-        group_by_status = []
-        group_by_repair_type = []
-        request_per_day = []
+        # group_by_status = []
+        # group_by_repair_type = []
+        # request_per_day = []
+        filter = {}
         conditions = []
         parameters = []
 
         if d00 is True:
+            filter["d00"] = True
             conditions.append("d00 > %s")
             parameters.append(0)
 
         if d10 is True:
+            filter["d10"] = True
             conditions.append("d10 > %s")
             parameters.append(0)
 
         if d20 is True:
+            filter["d20"] = True
             conditions.append("d20 > %s")
             parameters.append(0)
 
         if d40 is True:
+            filter["d40"] = True
             conditions.append("d40 > %s")
             parameters.append(0)
 
@@ -146,65 +151,72 @@ class PavementCrackViewSet(viewsets.ModelViewSet):
             conditions.append("timestamp <= %s")
             parameters.append(endDate)
 
-        with connection.cursor() as cursor:
-            # Query1
-            query = "SELECT status, COUNT(*) FROM pavement_crack_pavementcrack "
-            if conditions:
-                query += " WHERE " + " AND ".join(conditions)
-            query += " GROUP BY status"
+        # with connection.cursor() as cursor:
+        #     # Query1
+        #     query = "SELECT status, COUNT(*) FROM pavement_crack_pavementcrack "
+        #     if conditions:
+        #         query += " WHERE " + " AND ".join(conditions)
+        #     query += " GROUP BY status"
 
-            if parameters:
-                cursor.execute(query, parameters)
-            else:
-                cursor.execute(query)
-            rows = cursor.fetchall()
-            for row in rows:
-                group_by_status.append({
-                    'status': row[0],
-                    'count': row[1],
-                })
+        #     if parameters:
+        #         cursor.execute(query, parameters)
+        #     else:
+        #         cursor.execute(query)
+        #     rows = cursor.fetchall()
+        #     for row in rows:
+        #         group_by_status.append({
+        #             'status': row[0],
+        #             'count': row[1],
+        #         })
 
-            # Query2
-            query = "SELECT repair_type, COUNT(*) FROM pavement_crack_pavementcrack "
-            if conditions:
-                query += " WHERE " + " AND ".join(conditions)
-            query += " GROUP BY repair_type"
+        #     # Query2
+        #     query = "SELECT repair_type, COUNT(*) FROM pavement_crack_pavementcrack "
+        #     if conditions:
+        #         query += " WHERE " + " AND ".join(conditions)
+        #     query += " GROUP BY repair_type"
 
-            if parameters:
-                cursor.execute(query, parameters)
-            else:
-                cursor.execute(query)
-            rows = cursor.fetchall()
-            for row in rows:
-                group_by_repair_type.append({
-                    'repair_type': row[0],
-                    'count': row[1],
-                })
+        #     if parameters:
+        #         cursor.execute(query, parameters)
+        #     else:
+        #         cursor.execute(query)
+        #     rows = cursor.fetchall()
+        #     for row in rows:
+        #         group_by_repair_type.append({
+        #             'repair_type': row[0],
+        #             'count': row[1],
+        #         })
 
-            # Query3
-            query = "SELECT DATE_FORMAT(timestamp, '%%Y-%%m-%%d'), COUNT(*) FROM pavement_crack_pavementcrack "
-            if conditions:
-                query += " WHERE " + " AND ".join(conditions)
-            query += " GROUP BY DATE_FORMAT(timestamp, '%%Y-%%m-%%d')"
+        #     # Query3
+        #     query = "SELECT DATE_FORMAT(timestamp, '%%Y-%%m-%%d'), COUNT(*) FROM pavement_crack_pavementcrack "
+        #     if conditions:
+        #         query += " WHERE " + " AND ".join(conditions)
+        #     query += " GROUP BY DATE_FORMAT(timestamp, '%%Y-%%m-%%d')"
 
-            if parameters:
-                cursor.execute(query, parameters)
-            else:
-                cursor.execute(query)
-            rows = cursor.fetchall()
-            for row in rows:
-                request_per_day.append({
-                    'date': row[0],
-                    'count': row[1],
-                })
+        #     if parameters:
+        #         cursor.execute(query, parameters)
+        #     else:
+        #         cursor.execute(query)
+        #     rows = cursor.fetchall()
+        #     for row in rows:
+        #         request_per_day.append({
+        #             'date': row[0],
+        #             'count': row[1],
+        #         })
 
-        res = {
-            'group_by_status': group_by_status,
-            'group_by_repair_type': group_by_repair_type,
-            'request_per_day': request_per_day,
-        }
+        # res = {
+        #     'group_by_status': group_by_status,
+        #     'group_by_repair_type': group_by_repair_type,
+        #     'request_per_day': request_per_day,
+        # }
 
-        return JsonResponse({'data': res})
+        # return JsonResponse({'data': res})
+
+        uri = 'https://deep-pave-0a514df89d9a.herokuapp.com/api/get_reports'
+        uri += "?filter=" + json.dumps(filter)
+
+        res = requests.get(uri)
+
+        return JsonResponse(res.json())
 
     @action(detail=False)
     def get_planning(self, request):
